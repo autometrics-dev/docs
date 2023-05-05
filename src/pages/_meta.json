@@ -1,0 +1,19 @@
+{
+	"index": "Introduction",
+	"why": "Why Autometrics",
+	"features": "Features",
+	"quickstart": "Quickstart",
+	"language-platforms": {
+		"type": "separator",
+		"title": "Language Platforms"
+	},
+	"rust": "Rust",
+	"typescript": "TypeScript",
+	"golang": "Golang",
+	"python": "Python",
+	"-": {
+		"type": "separator"
+	},
+	"configuring-prometheus": "Configuring Prometheus",
+	"get-involved": "Get Involved"
+}
