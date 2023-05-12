@@ -2,7 +2,6 @@
 	"quickstart": "Quickstart",
 	"language_api": {
 		"title": "API Reference ↗",
-		"href": "https://docs.rs/autometrics",
-		"newWindow": true
+		"href": "https://pypi.org/project/autometrics/"
 	}
 }

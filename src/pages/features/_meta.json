@@ -1,6 +1,0 @@
-{
-	"ide": "Monitor production in IDE",
-	"spotting-commits": "Spotting commits",
-	"grafana-dashboards": "Grafana Dashboards",
-	"alerts": "Alerts using SLOs"
-}

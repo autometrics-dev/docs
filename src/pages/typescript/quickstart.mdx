@@ -1,0 +1,99 @@
+import { Steps, Tabs, Tab } from "nextra-theme-docs";
+
+# Getting started in TypeScript
+
+Here's how to get started with TypeScript in a new project.
+
+<Steps>
+### Install Autometrics
+
+<Tabs items={['npm', 'yarn', 'pnpm']}>
+  <Tab>
+  ```bash copy
+  npm install autometrics
+  ```
+  </Tab>
+  <Tab>
+  ```bash copy
+  yarn add autometrics
+  ```
+  </Tab>
+  <Tab>
+  ```bash copy
+  pnpm add autometrics
+  ```
+  </Tab>
+</Tabs>
+
+### Import the library in your code
+
+```ts copy
+import { autometrics } from 'autometrics';
+```
+
+### Wrap the functions you want to measure
+
+```ts /autometrics/
+import { autometrics } from "autometrics";
+
+const createUser = autometrics(async function createUser(payload: User) {
+  // ...
+});
+
+const user = createUser(); // this function will now report metrics when called
+
+```
+
+
+### Configure your Prometheus
+
+By default the TypeScript library makes the metrics available on `<your_host>:9464/metrics`. Make sure your Prometheus is configured correctly to find it. 
+
+See the [Configuring Prometheus](/configuring-prometheus) section for deploy target-specific instructions. 
+
+Example configuration:
+
+```yaml copy
+scrape_configs:
+  - job_name: my-app
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['localhost:9464']
+    # For a real deployment, you would want the scrape interval to be
+    # longer but for testing, you want the data to show up quickly
+    scrape_interval: 200ms
+```
+
+### Install VSCode extension
+
+Install the [Autometrics VSCode extension](https://marketplace.visualstudio.com/items?itemName=Fiberplane.autometrics) to get generated queries in your tooltips in your IDE.
+
+Alternatively, if you're using a different IDE, you can use the TypeScript plugin directly:
+  
+```bash copy
+npm install @autometrics/typescript-plugin --save-dev
+```
+
+Then in your `tsconfig.json`:
+
+```json copy filename="tsconfig.json"
+{
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@autometrics/typescript-plugin"
+      }
+    ]
+  }
+}
+```
+
+
+### View your metrics in your IDE or dashboard
+
+You can now navigate your code in your IDE, hover over the instrumented functions and you will see links for generated queries for your metrics.
+
+If you have Grafana you can also import the [Autometrics dashboard](https://github.com/autometrics-dev/autometrics-shared#dashboards) for an overview and detailed view of the function metrics.
+
+
+</Steps>
