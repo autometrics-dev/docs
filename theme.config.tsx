@@ -3,18 +3,32 @@ import { DocsThemeConfig } from "nextra-theme-docs";
 import Logo from "./src/components/Header/Logo";
 
 const config: DocsThemeConfig = {
-	logo: <Logo />,
-	darkMode: false,
-	project: {
-		link: "https://github.com/autometrics-dev",
-	},
-	chat: {
-		link: "https://discord.com",
-	},
-	docsRepositoryBase: "https://github.com/autometrics-dev/docs",
-	//footer: {
-	//  text: 'Autometrics',
-	//},
+  logo: <Logo />,
+  darkMode: false,
+  project: {
+    link: "https://github.com/autometrics-dev",
+  },
+  chat: {
+    link: "https://discord.gg/MJr7pYzZQ4",
+  },
+  useNextSeoProps() {
+    return {
+      titleTemplate: "%s | Autometrics",
+    };
+  },
+  primaryHue: 0,
+  docsRepositoryBase: "https://github.com/autometrics-dev/docs",
+  sidebar: {
+    toggleButton: true,
+  },
+  footer: {
+    text: (
+      <span>
+        MIT/Apache-2.0 {new Date().getFullYear()} ©{" "}
+        <a href="https://autometrics.dev">Autometrics</a>
+      </span>
+    ),
+  },
 };
 
 export default config;
