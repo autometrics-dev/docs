@@ -1,5 +1,6 @@
 {
 	"quickstart": "Quickstart",
+	"adding-version-information": "Adding version information",
 	"language_api": {
 		"title": "API Reference ↗",
 		"href": "https://pkg.go.dev/github.com/autometrics-dev/autometrics-go/cmd/autometrics"
