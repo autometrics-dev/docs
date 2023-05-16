@@ -1,6 +1,8 @@
 {
+	"quickstart": "Quickstart",
 	"language_api": {
-		"title": "Autometrics Rust API",
-		"href": "https://docs.rs/autometrics"
+		"title": "API Reference ↗",
+		"href": "https://docs.rs/autometrics",
+		"newWindow": true
 	}
 }

@@ -1,0 +1,165 @@
+import { Callout, Steps, Tabs, Tab } from "nextra-theme-docs";
+
+# Getting started in Go
+
+Here's how to get started with Go in a new project.
+
+## Pre-requisites
+
+There is a one-time setup phase to prime the code for autometrics. Once this phase is accomplished, only calling go generate is necessary.
+
+### Install the generator
+
+The generator is the binary in cmd/autometrics, so the easiest way to get it is to install it through Go:
+
+```bash
+go install github.com/autometrics-dev/autometrics-go/cmd/autometrics@latest
+```
+
+### Add the generator to your PATH
+
+In order to have autometrics visible then, make sure that the directory $GOBIN (or the default $GOPATH/bin) is in your $PATH:
+
+```bash
+echo "$PATH" | grep -q "${GOBIN:-$GOPATH/bin}" && echo "GOBIN in PATH" || echo "GOBIN not in PATH, please add it"
+GOBIN in PATH
+```
+
+## Instructions
+
+<Steps>
+
+
+### Import the library in your code
+
+In the main entrypoint of your program, you need to both add package
+
+```go
+import (
+	autometrics "github.com/autometrics-dev/autometrics-go/pkg/autometrics/prometheus"
+)
+```
+
+And then in your main function initialize the metrics
+
+```go
+	// Everything in BuildInfo is optional.
+	// You can also use any string variable whose value is
+	// injected at build time by ldflags.
+	autometrics.Init(
+		nil,
+		autometrics.DefBuckets,
+		autometrics.BuildInfo{
+			Version: "0.4.0",
+			Commit: "anySHA",
+			Branch: "",
+		},
+	)
+```
+
+### Add `go:generate autometrics` to your code
+
+The manual changes you need to do are:
+
+```go
+//go:generate autometrics
+
+//autometrics:doc
+func RouteHandler(args interface{}) (err error) { // Name the error return value; this is an optional but recommended change
+        // Do stuff
+        return nil
+}
+```
+
+<Callout>
+If you want the generated metrics to contain the function success rate, you must name the error return value. This is why we recommend to name the error value you return for the function you want to instrument.
+</Callout>
+
+### Generate the documentation and instrumentation code
+
+Install the go generator using `go install` as usual:
+
+```bash
+go install https://github.com/autometrics-dev/autometrics-go/cmd/autometrics
+```
+
+Once you've done this, the `autometrics` generator takes care of the rest, and you can
+simply call `go generate` with an optional environment variable:
+
+```bash
+AM_PROMETHEUS_URL=http://localhost:9090/ go generate ./...
+```
+
+The generator will augment your doc comment to add quick links to metrics (using
+the Prometheus URL as base URL), and add a unique defer statement that will take
+care of instrumenting your code.
+
+The environment variable `AM_PROMETHEUS_URL` controls the base URL of the instance that
+is scraping the deployed version of your code. Having an environment variable means you
+can change the generated links without touching your code. The default value, if absent,
+is `http://localhost:9090/`.
+
+You can have any value here, the only adverse impact it can
+have is that the links in the doc comment might lead nowhere useful.
+
+### Make metrics available to Prometheus
+
+The last step now is to actually expose the generated metrics to the Prometheus instance.
+
+For Prometheus the shortest way is to add the handler code in your main entrypoint:
+
+``` go
+import (
+	autometrics "github.com/autometrics-dev/autometrics-go/pkg/autometrics/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+)
+
+
+func main() {
+	autometrics.Init(
+		nil,
+		autometrics.DefBuckets,
+		autometrics.BuildInfo{
+			Version: "0.4.0",
+			Commit: "anySHA",
+			Branch: "",
+		},
+	)
+	http.Handle("/metrics", promhttp.Handler())
+}
+```
+
+This is the shortest way to initialize and expose the metrics that autometrics will use
+in the generated code.
+
+{/* <Callout type="warning">
+If you want to enable alerting from Autometrics, you MUST have the `--latency-ms` values to match the values given in your buckets. The values in the buckets are given in seconds. By default, the generator will error and tell you the valid default values if they don't match. If the default values do not match your use case, you can change the buckets in the init call, and add a `--custom-latency` argument to the `//go:generate` invocation.
+```diff
+-//go:generate autometrics
++//go:generate autometrics --custom-latency
+```
+</Callout> */}
+
+
+### Configure your Prometheus
+
+Make sure your Prometheus is configured correctly to find the metrics.
+
+See the [Configuring Prometheus](/configuring-prometheus) section for deploy target-specific instructions. 
+
+Example configuration:
+
+```yaml
+scrape_configs:
+  - job_name: my-app
+    metrics_path: /metrics
+    static_configs:
+      # Replace the port with the port your app listens on
+      - targets: ['<host>:<port>']
+    # For a real deployment, you would want the scrape interval to be
+    # longer but for testing, you want the data to show up quickly
+    scrape_interval: 200ms
+```
+
+
+</Steps>

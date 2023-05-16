@@ -1,20 +1,34 @@
-import React from 'react'
-import { DocsThemeConfig } from 'nextra-theme-docs'
-import Logo from "./src/components/Header/Logo"
+import React from "react";
+import { DocsThemeConfig } from "nextra-theme-docs";
+import Logo from "./src/components/Header/Logo";
 
 const config: DocsThemeConfig = {
   logo: <Logo />,
-	darkMode: false,
+  darkMode: false,
   project: {
-    link: 'https://github.com/autometrics-dev',
+    link: "https://github.com/autometrics-dev",
   },
   chat: {
-    link: 'https://discord.com',
+    link: "https://discord.gg/MJr7pYzZQ4",
   },
-  docsRepositoryBase: 'https://github.com/autometrics-dev/docs',
+  useNextSeoProps() {
+    return {
+      titleTemplate: "%s | Autometrics",
+    };
+  },
+  primaryHue: 0,
+  docsRepositoryBase: "https://github.com/autometrics-dev/docs",
+  sidebar: {
+    toggleButton: true,
+  },
   footer: {
-    text: 'Autometrics',
+    text: (
+      <span>
+        MIT/Apache-2.0 {new Date().getFullYear()} ©{" "}
+        <a href="https://autometrics.dev">Autometrics</a>
+      </span>
+    ),
   },
-}
+};
 
-export default config
+export default config;

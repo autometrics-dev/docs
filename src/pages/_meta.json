@@ -1,19 +1,24 @@
 {
-	"index": "Introduction",
-	"why": "Why Autometrics",
-	"features": "Features",
-	"quickstart": "Quickstart",
-	"language-platforms": {
-		"type": "separator",
-		"title": "Language Platforms"
-	},
-	"rust": "Rust",
-	"typescript": "TypeScript",
-	"golang": "Golang",
-	"python": "Python",
-	"-": {
-		"type": "separator"
-	},
-	"configuring-prometheus": "Configuring Prometheus",
-	"get-involved": "Get Involved"
+  "index": "Introduction",
+  "why-autometrics": "Why Autometrics?",
+  "features": "Features",
+  "languages": {
+    "type": "separator",
+    "title": "Languages"
+  },
+  "rust": "Rust",
+  "typescript": "TypeScript",
+  "go": "Go",
+  "python": "Python",
+  "c-sharp": {
+    "title": "C# (community) ↗",
+    "newWindow": true,
+    "href": "https://github.com/P2P-Nathan/autometrics-cs"
+  },
+  "--": {
+    "type": "separator",
+    "title": ""
+  },
+  "configuring-prometheus": "Configuring Prometheus",
+  "get-involved": "Get Involved"
 }

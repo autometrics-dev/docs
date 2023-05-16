@@ -1,0 +1,36 @@
+import { Callout, Steps, Tabs, Tab } from "nextra-theme-docs";
+import GettingStartedSnippet from "@/snippets/quickstart-getting-started-intro.mdx"
+
+<GettingStartedSnippet lang="Python" />
+
+<Steps>
+
+### Install the library
+
+```bash
+pip install autometrics
+```
+
+
+### Import the library and use the decorator
+
+```python
+from autometrics import autometrics
+
+@autometrics
+def sayHello:
+   return "hello"
+
+```
+
+### Install VSCode extension
+
+Install the [Autometrics VSCode extension](https://marketplace.visualstudio.com/items?itemName=Fiberplane.autometrics) to get generated queries in your tooltips in your IDE.
+
+### View your metrics in your IDE or dashboard
+
+You can now navigate your code in your IDE, hover over the instrumented functions and you will see links for generated queries for your metrics.
+
+If you have Grafana you can also import the [Autometrics dashboard](https://github.com/autometrics-dev/autometrics-shared#dashboards) for an overview and detailed view of the function metrics.
+
+</Steps>
