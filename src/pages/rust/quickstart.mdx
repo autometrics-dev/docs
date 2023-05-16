@@ -1,4 +1,4 @@
-import { Steps, Tabs, Tab } from "nextra-theme-docs";
+import { Steps, Tabs, Tab, Callout } from "nextra-theme-docs";
 import GettingStartedSnippet from "@/snippets/quickstart-getting-started-intro.mdx"
 
 
@@ -25,9 +25,14 @@ pub async fn create_user() {
 ```
 
 ### Export the metrics for Prometheus
-Autometrics includes optional functions to help collect and prepare metrics to be collected by Prometheus.
 
-In your main function, initialize the global_metrics_exporter:
+<Callout type="info">
+If you're already using Prometheus metrics in your app, you can skip this step. You only need to configure Autometrics to use the same underlying metrics collection library as your existing Prometheus metrics. See [Metrics Libraries](https://docs.rs/autometrics/latest/autometrics/#metrics-libraries) for more information in the API reference.
+</Callout>
+
+Autometrics includes optional functions to help collect and prepare metrics to be scraped by Prometheus.
+
+In your main function, initialize the `global_metrics_exporter`:
 
 ```rust
 pub fn main() {
