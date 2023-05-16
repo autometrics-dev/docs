@@ -520,6 +520,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"autometrics-docs@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "autometrics-docs@workspace:."
+  dependencies:
+    "@types/node": 18.11.10
+    "@types/react": 18.2.0
+    next: ^13.0.6
+    nextra: latest
+    nextra-theme-docs: latest
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    rome: 12.0.0
+    typescript: ^4.9.3
+    vfile-message: ^3.1.4
+  languageName: unknown
+  linkType: soft
+
 "bail@npm:^2.0.0":
   version: 2.0.2
   resolution: "bail@npm:2.0.2"
@@ -2075,23 +2092,6 @@ __metadata:
   checksum: 169e3fbbf713fad791a9b016c83d396bce628bb0ddf716c5fe50104a21cbc37af7df1586cbe05ae4ae6a090f4e1107211189cfbeeeab8345fe54e11cfefce87f
   languageName: node
   linkType: hard
-
-"nextra-docs-template@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "nextra-docs-template@workspace:."
-  dependencies:
-    "@types/node": 18.11.10
-    "@types/react": 18.2.0
-    next: ^13.0.6
-    nextra: latest
-    nextra-theme-docs: latest
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    rome: 12.0.0
-    typescript: ^4.9.3
-    vfile-message: ^3.1.4
-  languageName: unknown
-  linkType: soft
 
 "nextra-theme-docs@npm:latest":
   version: 2.5.1
