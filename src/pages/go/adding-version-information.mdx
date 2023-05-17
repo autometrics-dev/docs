@@ -14,7 +14,7 @@ build_info{branch="main",commit="5cc2aa5447907fbf0a7ddd",version="1.0.0"} 1
 
 ## Usage
 
-To add version information to your metrics, simply add the `autometrics.BuildInfo` parameter to the `autometrics.Init()` call:
+To add version information to your metrics, simply fill the `autometrics.BuildInfo` parameter to the `autometrics.Init()` call:
 
 ```go {4-8} filename="main.go"
 autometrics.Init(
@@ -44,7 +44,7 @@ var (
 )
 ```
 
-### Add `autometrics.BuildInfo` to your `autometrics.Init()` call
+### Fill `autometrics.BuildInfo` in your `autometrics.Init()` call
 
 ```go {4-8} filename="main.go"
 autometrics.Init(
