@@ -1,0 +1,44 @@
+import { Steps, Tabs, Tab } from "nextra-theme-docs";
+import BuildInfoTable from "@/snippets/build-info-table.mdx"
+
+<BuildInfoTable 
+    language="Rust"
+    version={{
+        env: "CARGO_PKG_VERSION",
+        default: "CARGO_PKG_VERSION (set by cargo by default)"
+    }} 
+    commit={{
+        env: "VERGEN_GIT_COMMIT",
+    }} 
+    branch={{
+        env: "VERGEN_GIT_BRANCH",
+    }}
+/>
+
+<Steps>
+
+## Using `vergen` to set the `git` details
+
+You can use the [vergen](https://github.com/rustyhorde/vergen) crate to set the `git` details that Autometrics can then pick up.
+
+
+### Add `vergen` to your `Cargo.toml` file
+
+```toml filename="Cargo.toml"
+[build-dependencies]
+vergen = { version = "8.1", features = ["git", "gitcl"] }
+```
+
+### Add the following snippet to your `build.rs` file
+
+```rust filename="build.rs"
+fn main() {
+  vergen::EmitBuilder::builder()
+      .git_sha(true)
+      .git_branch()
+      .emit()
+      .expect("Unable to generate build info");
+}
+```
+
+</Steps>

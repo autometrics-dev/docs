@@ -1,5 +1,6 @@
 {
 	"quickstart": "Quickstart",
+	"adding-alerts-and-slos": "Adding alerts and SLOs",
 	"language_api": {
 		"title": "API Reference ↗",
 		"href": "https://docs.rs/autometrics",
