@@ -43,8 +43,9 @@ And then in your main function initialize the metrics:
 
 ```go filename="main.go"
 	autometrics.Init(
-		nil,
+		"web-server",
 		autometrics.DefBuckets,
+		autometrics.BuildInfo{}
 	)
 ```
 
@@ -71,7 +72,7 @@ If you want the generated metrics to contain the function success rate, you must
 Install the go generator using `go install` as usual:
 
 ```bash filename="Shell"
-go install https://github.com/autometrics-dev/autometrics-go/cmd/autometrics
+go install https://github.com/autometrics-dev/autometrics-go/cmd/autometrics@latest
 ```
 
 Once you've done this, the `autometrics` generator takes care of the rest, and you can
@@ -93,15 +94,15 @@ For Prometheus the shortest way is to add the handler code in your main entrypoi
 
 ```go {12} filename="main.go"
 import (
-	autometrics "github.com/autometrics-dev/autometrics-go/pkg/autometrics/prometheus"
+	autometrics "github.com/autometrics-dev/autometrics-go/pkg/autometrics/otel"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-
 func main() {
 	autometrics.Init(
-		nil,
+		"web-server",
 		autometrics.DefBuckets,
+		autometrics.BuildInfo{}
 	)
 	http.Handle("/metrics", promhttp.Handler())
 }
