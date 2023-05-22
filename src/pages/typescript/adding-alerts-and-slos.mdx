@@ -1,0 +1,54 @@
+import { Callout, Steps, Tabs, Tab } from "nextra-theme-docs";
+import AlertsSLOsLangIntro from "@/snippets/adding-alerts-slos.mdx";
+
+<AlertsSLOsLangIntro language="TypeScript"/>
+
+## Pre-requisites
+
+1. Make sure you have setup and initialized Autometrics libraries as described in [Quickstart section](quickstart).
+
+2. Add the pre-configured Prometheus rules file to your Prometheus configuration. This file is located in the [Autometrics shared repository](https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml)
+
+## Usage
+
+<Steps>
+
+### Create `Objectives` with your desired SLOs
+
+To use autometrics SLOs and alerts, create one or multiple Objectives based on the function(s) success rate and/or latency, as shown below. 
+
+```ts
+import { autometrics, Objective, ObjectiveLatency, ObjectivePercentile } from "autometrics";
+
+const API_SLO: Objective = {
+  name: 'api',
+  successRate: ObjectivePercentile.P99_9,
+  latency: [ObjectiveLatency.Ms250, ObjectivePercentile.P99],
+};
+```
+
+### Add `Objectives` to the `autometrics` wrapper or decorator as an options object
+The Objective (`API_SLO` in this case) can be added to the options object, passed into the autometrics wrapper including the given function in that objective.
+
+Note: the options object, must always be the first item in the wrapper
+
+```ts {9-11}
+import { autometrics, Objective, ObjectiveLatency, ObjectivePercentile } from "@autometrics/autometrics";
+
+const API_SLO: Objective = {
+  name: 'api',
+  successRate: ObjectivePercentile.P99_9,
+  latency: [ObjectiveLatency.Ms250, ObjectivePercentile.P99],
+};
+
+const apiHandlerFn = autometrics({ objective: API_SLO }, function apiHandler(
+  // ...
+));
+```
+
+</Steps>
+
+## Viewing SLOs and Alerts
+
+Once you've added objectives to your code, you can use the [Autometrics Service-Level Objectives (SLO) Dashboards](https://github.com/autometrics-dev/autometrics-shared/tree/main/dashboards) to visualize the current status of your objective(s).
+
