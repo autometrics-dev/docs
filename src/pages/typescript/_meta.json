@@ -1,5 +1,5 @@
 {
-	"quickstart": "Quickstart",
+  "quickstart": "Quickstart",
   "reference": {
     "title": "API Reference ↗",
     "href": "https://github.com/autometrics-dev/autometrics-ts/tree/main/packages/lib/reference",
