@@ -1,4 +1,8 @@
 {
 	"quickstart": "Quickstart",
-	"reference": "API Reference"
+  "reference": {
+    "title": "API Reference ↗",
+    "href": "https://github.com/autometrics-dev/autometrics-ts/tree/main/packages/lib/reference",
+    "newWindow": true
+  }
 }
