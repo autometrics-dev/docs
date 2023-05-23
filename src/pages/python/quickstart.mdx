@@ -23,6 +23,16 @@ def sayHello:
 
 ```
 
+### Set the metrics collection library (optional)
+
+Use the environment variable `AUTOMETRICS_TRACKER` to set the metrics collection
+library. The default is `OPEN_TELEMETRY`.
+
+Options:
+- `OPEN_TELEMETRY` - uses `opentelemetry` to collect and expose metrics
+- `PROMETHEUS` - uses `prometheus_client` to collect and expose metrics
+
+
 ### Install VSCode extension
 
 Install the [Autometrics VSCode extension](https://marketplace.visualstudio.com/items?itemName=Fiberplane.autometrics) to get generated queries in your tooltips in your IDE.
