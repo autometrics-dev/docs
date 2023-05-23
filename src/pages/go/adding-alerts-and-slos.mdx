@@ -14,7 +14,7 @@ import AlertsSLOsLangIntro from "@/snippets/adding-alerts-slos.mdx";
 Taking our example Autometrics-instrumented function from earlier:
 
 ```go filename="main.go"
-//autometrics:doc
+//autometrics:inst
 func RouteHandler(args interface{}) (err error) {
         // ...
         return nil
@@ -24,7 +24,7 @@ func RouteHandler(args interface{}) (err error) {
 We can add an SLO to this function with the following comment:
 
 ```go filename="main.go"
-//autometrics:doc --slo "Api" --success-target 90
+//autometrics:inst --slo "Api" --success-target 90
 func RouteHandler(args interface{}) (err error) {
         // ...
         return nil
