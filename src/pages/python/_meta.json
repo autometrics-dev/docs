@@ -1,7 +1,9 @@
 {
   "quickstart": "Quickstart",
+  "adding-version-information": "Adding version information",
   "language_api": {
     "title": "API Reference ↗",
-    "href": "https://pypi.org/project/autometrics/"
+    "href": "https://pypi.org/project/autometrics/",
+    "newWindow": true
   }
 }
