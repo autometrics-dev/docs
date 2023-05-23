@@ -1,0 +1,16 @@
+import { Steps, Tabs, Tab } from "nextra-theme-docs";
+import BuildInfoTable from "@/snippets/build-info-table.mdx"
+
+<BuildInfoTable 
+    language="TypeScript"
+    version={{
+        env: "PACKAGE_VERSION",
+        default: "npm_package_version (set by npm/pnpm/yarn by default)"
+    }} 
+    commit={{
+        env: "COMMIT_SHA",
+    }} 
+    branch={{
+        env: "BRANCH_NAME",
+    }}
+/>
