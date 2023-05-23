@@ -43,7 +43,7 @@ And then in your main function initialize the metrics:
 
 ```go filename="main.go"
 	autometrics.Init(
-		"web-server",
+		nil,
 		autometrics.DefBuckets,
 		autometrics.BuildInfo{}
 	)
