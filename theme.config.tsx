@@ -5,6 +5,9 @@ import Logo from "./src/components/Header/Logo";
 const config: DocsThemeConfig = {
   logo: <Logo />,
   darkMode: false,
+  nextThemes: {
+    forcedTheme: "light"
+  },
   project: {
     link: "https://github.com/autometrics-dev",
   },
@@ -16,7 +19,7 @@ const config: DocsThemeConfig = {
       titleTemplate: "%s | Autometrics",
     };
   },
-  primaryHue: 0,
+  primaryHue: 240,
   docsRepositoryBase: "https://github.com/autometrics-dev/docs",
   sidebar: {
     toggleButton: true,

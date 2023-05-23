@@ -1,0 +1,49 @@
+import { Callout, Steps, Tabs, Tab } from "nextra-theme-docs";
+import AlertsSLOsLangIntro from "@/snippets/adding-alerts-slos.mdx";
+
+<AlertsSLOsLangIntro language="Go"/>
+
+## Pre-requisites
+
+1. Make sure you have setup and initialized Autometrics libraries as described in [Quickstart section](quickstart).
+
+2. Add the pre-configured Prometheus rules file to your Prometheus configuration. This file is located in the [Autometrics shared repository](https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml)
+
+## Usage
+
+Taking our example Autometrics-instrumented function from earlier:
+
+```go filename="main.go"
+//autometrics:inst
+func RouteHandler(args interface{}) (err error) {
+        // ...
+        return nil
+}
+```
+
+We can add an SLO to this function with the following comment:
+
+```go filename="main.go"
+//autometrics:inst --slo "Api" --success-target 90
+func RouteHandler(args interface{}) (err error) {
+        // ...
+        return nil
+}
+```
+
+This will create an SLO named `Api` with a target of 90% success rate. The SLO will be associated with the function `RouteHandler` and will be reported to Prometheus. **You can have multiple functions associated with the same SLO.**
+
+The valid arguments for alert generation are:
+
+- `--slo` (MANDATORY for alert generation): name of the service for which the objective is relevant
+- `--success-rate` : target success rate of the function, between 0 and 100 (you must name the error return value of the function for detection to work.)
+- `--latency-ms` : maximum latency allowed for the function, in milliseconds.
+- `--latency-target` : latency target for the threshold, between 0 and 100 (so X% of calls must last less than latency-ms milliseconds). You must specify both latency options, or none.
+
+<Callout type="warning">
+The generator will error out if you use targets that are not supported by the bundled [Alerting rules](https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml) file. Support for custom target is planned but not present at the moment
+</Callout>
+
+<Callout type="warning">
+If you want to enable alerting from Autometrics, you MUST have the `--latency-ms` values to match the values given in your buckets. The values in the buckets are given in seconds. By default, the generator will error and tell you the valid default values if they don't match. If the default values do not match your use case, you can change the buckets in the init call, and add a `--custom-latency` argument to the `//go:generate` invocation.
+</Callout>

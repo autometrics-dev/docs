@@ -1,0 +1,17 @@
+# Adding version information to metrics in {props.language}
+
+Autometrics makes it easy to spot versions and commits that introduce errors or latency.
+
+It produces a `build_info` metric and uses labels to expose the version, commit and branch information of your app to Prometheus.
+
+```prometheus 
+build_info{branch="main",commit="5cc2aa5447907fbf0a7ddd",version="1.0.0"} 1
+```
+
+Labels are exposed and can be set as environment variables at compile or run time:
+
+| Label    | Environment Variables                             | Default                                  |
+| -------- | -------------------------------------------------- | ---------------------------------------- |
+| `version` | `AUTOMETRICS_VERSION` or {props.version.env}       | {props.version.default ?? "\"\""}        |
+| `commit`  | `AUTOMETRICS_COMMIT` or {props.commit.env}         | {props.commit.default ?? "\"\""}         |
+| `branch`  | `AUTOMETRICS_BRANCH` or {props.branch.env}         | {props.branch.default ?? "\"\""}         |

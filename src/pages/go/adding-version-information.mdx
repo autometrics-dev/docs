@@ -1,0 +1,71 @@
+import { Callout, Steps, Tabs, Tab } from "nextra-theme-docs";
+
+# Adding version information to metrics in Go
+
+Autometrics makes it easy to spot versions and commits that introduce errors or latency.
+
+It produces a `build_info` metric and uses labels to expose the version, commit and branch information of your app to Prometheus.
+
+Example:
+
+```prometheus 
+build_info{branch="main",commit="5cc2aa5447907fbf0a7ddd",version="1.0.0"} 1
+```
+
+## Usage
+
+To add version information to your metrics, simply fill the `autometrics.BuildInfo` parameter to the `autometrics.Init()` call:
+
+```go {4-8} filename="main.go"
+autometrics.Init(
+    nil,
+    autometrics.DefBuckets,
+    autometrics.BuildInfo{
+        Version: "<version_here>",
+        Commit:  "<git_commit_hash_here",
+        Branch:  "<git_branch_here>",
+    }
+)
+```
+
+`autometrics.BuildInfo` parameter accepts each fields as strings which you can set as you wish or use something like `ldflags` to set them at build time.
+
+## Using `ldflags` to add version information at build time
+
+<Steps>
+
+### Declare variables to hold the version information
+
+```go filename="main.go"
+var (
+    Version = "development"
+    Commit  = "n/a"
+    Branch  string
+)
+```
+
+### Fill `autometrics.BuildInfo` in your `autometrics.Init()` call
+
+```go {4-8} filename="main.go"
+autometrics.Init(
+    nil,
+    autometrics.DefBuckets,
+    autometrics.BuildInfo{
+        Version: Version,
+        Commit:  Commit,
+        Branch:  Branch,
+    }
+)
+```
+
+### Build your app with `ldflags`
+
+Now you can build your Go app using `ldflags` to set the version, commit and branch information.
+
+Here's an example that uses git tags, commit hash and branch name:
+
+```bash filename="Shell"
+go build -ldflags "-X main.Version=$(git describe --tags) -X main.Commit=$(git rev-parse HEAD) -X main.Branch=$(git rev-parse --abbrev-ref HEAD)"
+```
+
+</Steps>
