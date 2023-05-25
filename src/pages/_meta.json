@@ -19,6 +19,8 @@
     "type": "separator",
     "title": ""
   },
-  "configuring-prometheus": "Configuring Prometheus",
+  "configuring-prometheus": {
+    "display": "hidden"
+  },
   "get-involved": "Get Involved"
 }

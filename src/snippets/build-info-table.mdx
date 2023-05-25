@@ -10,8 +10,29 @@ build_info{branch="main",commit="5cc2aa5447907fbf0a7ddd",version="1.0.0"} 1
 
 Labels are exposed and can be set as environment variables at compile or run time:
 
-| Label    | Environment Variables                             | Default                                  |
-| -------- | -------------------------------------------------- | ---------------------------------------- |
-| `version` | `AUTOMETRICS_VERSION` or {props.version.env}       | {props.version.default ?? "\"\""}        |
-| `commit`  | `AUTOMETRICS_COMMIT` or {props.commit.env}         | {props.commit.default ?? "\"\""}         |
-| `branch`  | `AUTOMETRICS_BRANCH` or {props.branch.env}         | {props.branch.default ?? "\"\""}         |
+{<table>
+    <thead>
+        <tr>
+            <th>Label</th>
+            <th>Environment Variables</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>version</code></td>
+            <td><code>AUTOMETRICS_VERSION</code> {props?.version?.env ? "or " + props.version.env : undefined}</td>
+            <td><code>{props?.version?.default ?? "\"\""}</code></td>
+        </tr>
+        <tr>
+            <td><code>commit</code></td>
+            <td><code>AUTOMETRICS_COMMIT</code> {props?.commit?.env ? "or " + props.commit.env : undefined}</td>
+            <td><code>{props?.commit?.default ?? "\"\""}</code></td>
+        </tr>
+        <tr>
+            <td><code>branch</code></td>
+            <td><code>AUTOMETRICS_BRANCH</code> {props?.branch?.env ? "or " + props.branch.env : undefined}</td>
+            <td><code>{props?.branch?.default ?? "\"\""}</code></td>
+        </tr>
+    </tbody>
+</table>}

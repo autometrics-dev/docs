@@ -1,0 +1,15 @@
+import { Callout, Tabs, Tab } from "nextra-theme-docs";
+import BuildInfoTable from "@/snippets/build-info-table.mdx"
+
+<BuildInfoTable 
+    language="Python"
+/>
+
+<Callout type="warning">
+As of writing, build_info will not work correctly when using the default tracker
+(`AUTOMETRICS_TRACKER=OPEN_TELEMETRY`). This will be fixed once the following PR
+is merged on the opentelemetry-python project:
+[open-telemetry/opentelemetry-python#3306](https://github.com/open-telemetry/opentelemetry-python/pull/3306)
+
+autometrics-py will track support for `build_info` via #38
+</Callout>

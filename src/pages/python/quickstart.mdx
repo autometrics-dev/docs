@@ -11,17 +11,25 @@ import GettingStartedSnippet from "@/snippets/quickstart-getting-started-intro.m
 pip install autometrics
 ```
 
-
 ### Import the library and use the decorator
 
 ```python
 from autometrics import autometrics
 
 @autometrics
-def sayHello:
-   return "hello"
-
+def create_user(name):
+   # ...
 ```
+
+### Set the metrics collection library (optional)
+
+Use the environment variable `AUTOMETRICS_TRACKER` to set the metrics collection
+library. The default is `OPEN_TELEMETRY`.
+
+Options:
+- `OPEN_TELEMETRY` - uses `opentelemetry` to collect and expose metrics
+- `PROMETHEUS` - uses `prometheus_client` to collect and expose metrics
+
 
 ### Install VSCode extension
 
