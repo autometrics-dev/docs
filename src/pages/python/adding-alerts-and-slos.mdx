@@ -5,7 +5,7 @@ import AlertsSLOsLangIntro from "@/snippets/adding-alerts-slos.mdx";
 
 ## Pre-requisites
 
-1. Make sure you have setup and initialized Autometrics libraries as described in [Quickstart section](quickstart).
+1. Make sure you have set up and initialized Autometrics libraries as described in the [quickstart section](quickstart).
 
 2. Add the pre-configured Prometheus rules file to your Prometheus configuration. This file is located in the [Autometrics shared repository](https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml)
 
@@ -15,14 +15,14 @@ import AlertsSLOsLangIntro from "@/snippets/adding-alerts-slos.mdx";
 
 ### Create `Objectives` with your desired SLOs
 
-To use autometrics SLOs and alerts, create one or multiple Objectives based on the function(s) success rate and/or latency, as shown below. 
+To use Autometrics SLOs and alerts, create one or multiple Objectives based on the function(s) success rate and/or latency, as shown below. 
 
 ```python
 from autometrics import autometrics
 from autometrics.objectives import Objective, ObjectiveLatency, ObjectivePercentile
 
 API_SLO = Objective(
-    "random",
+    "api_slo",
     success_rate=ObjectivePercentile.P99_9,
     latency=(ObjectiveLatency.Ms250, ObjectivePercentile.P99),
 )
@@ -32,22 +32,32 @@ API_SLO = Objective(
 The Objective (`API_SLO` in this case) can be passed as an argument to the
 autometrics decorator to include the given function in that objective.
 
-```python {10-12}
+You can group multiple functions into a single objective by passing the same objective to multiple functions.
+
+```python {10-20}
 from autometrics import autometrics
 from autometrics.objectives import Objective, ObjectiveLatency, ObjectivePercentile
 
 API_SLO = Objective(
-    "random",
+    "api_slo",
     success_rate=ObjectivePercentile.P99_9,
     latency=(ObjectiveLatency.Ms250, ObjectivePercentile.P99),
 )
 
 @autometrics(objective=API_SLO)
-def api_handler():
+def create_user():
+  # ...
+
+@autometrics(objective=API_SLO)
+def get_user():
+  # ...
+
+@autometrics(objective=API_SLO)
+def delete_user():
   # ...
 ```
 
-You can group multiple functions into a single objective by passing the same objective to multiple functions.
+
 
 </Steps>
 
