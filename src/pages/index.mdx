@@ -1,3 +1,5 @@
+import { Cards, Card } from "nextra-theme-docs";
+
 # What is Autometrics?
 
 Autometrics is an observability micro-framework built for developers. It makes it easy to instrument any function with the most useful metrics: request rate, error rate, and latency. Autometrics uses instrumented function names to generate Prometheus queries so you don't need to hand-write complicated PromQL.
@@ -17,3 +19,15 @@ Autometrics is built on the excellent Prometheus and OpenTelemetry open source p
 		alt="Autometrics demo video"
 	></video>
 </p>
+
+### Getting started
+
+Autometrics is currently available in Rust, JavaScript/TypeScript, and
+Python. To get started, follow the instructions for your language:
+
+<Cards num={4}>
+  <Card arrow title="Rust" href="/rust/quickstart" />
+  <Card arrow title="TypeScript" href="/typescript/quickstart" />
+  <Card arrow title="Go" href="/go/quickstart" />
+  <Card arrow title="Python" href="/python/quickstart" />
+</Cards>
