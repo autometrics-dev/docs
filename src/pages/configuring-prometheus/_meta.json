@@ -1,6 +1,5 @@
 {
-	"local": "Local",
-	"docker": "Docker",
-	"fly-io": "Fly.io",
-	"kubernetes": "Kubernetes"
+  "local": "Local",
+  "fly-io": "Fly.io",
+  "kubernetes": "Kubernetes"
 }

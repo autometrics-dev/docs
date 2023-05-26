@@ -1,0 +1,22 @@
+# Configuring Prometheus in Kubernetes
+
+Prometheus supports service discovery, so it can automatically find Kubernetes
+pods to scrape.
+
+If you have Prometheus installed using the [helm
+chart](https://github.com/prometheus-community/helm-charts), service discovery
+should be enabled by default.
+
+Add the following annotations to your app's deployment:
+
+```yaml filename="deployment.yaml"
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "9091"
+```
