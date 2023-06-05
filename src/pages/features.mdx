@@ -7,24 +7,48 @@ experience for developers instrumenting their code.
 ### Graphs in your IDE
 
 Easily explore your application's performance from within your editor.
+Autometrics automatically inserts links to generated PromQL queries directly in
+your function's doc comments.
+
+[Download the VSCode extension to get
+started.](https://marketplace.visualstudio.com/items?itemName=Fiberplane.autometrics)
 
 ### Grafana dashboards for debugging
 
-All metric data Autometrics generates has standard names, enabling you to use
-functional dashboards.
+All metrics data Autometrics generates has standard names, enabling you to use
+dashboards without any configuration. You can grab any of the already-created
+dashboards, connect your Prometheus with Autometrics data, and start exploring.
+
+Dashboards:
+- [Autometrics Overview](https://grafana.com/grafana/dashboards/18505-autometrics-overview/)
+- [Autometrics Function Explorer](https://grafana.com/grafana/dashboards/18504-autometrics-function-explorer/)
+- [Autometrics Service-Level Objectives (SLOs)](https://grafana.com/grafana/dashboards/18506-autometrics-service-level-objectives-slos/)
 
 ### Spot faulty commits and deploys
 
-Autometrics tracks your software versions and writes queries that can help
-pinpoint where and when issues were introduced
+Autometrics can track your software versions and will writes queries that can help
+pinpoint where and when issues were introduced.
+
+Under the hood Autometrics produces a `build_info` metric and uses labels to
+expose the version, commit and branch information of your app to Prometheus.
 
 ### Alerts and SLOs without YAML
 
-Autometrics allows you to group instrumented functions in to SLOs and create
-useful alerts on them all while  keeping the context in your application source
-code.
+Autometrics allows you to group instrumented functions in to Service-Level
+Objectives (SLO) and create useful alerts on them all while keeping the context
+in your application source code.
+
+Alerts for any Autometrics SLO can be enabled using a *single* alerting rules
+file:
+[`autometrics.rules.yml`](https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml).
+By default these rules are dormant, and are enabled only when metrics with
+Autometrics SLO labels are registered.
+
+The default set of rules will work for any project that uses the following objective
+percentiles: 90%, 95%, 99%, 99.9%. If you want to use other percentiles you can
+generate a new rules file, see [here for instructions](https://github.com/autometrics-dev/autometrics-rs/tree/main/autometrics-cli)
 
 ### Open source and vendor agnostic
 
-Autometrics can be incrementally adopted with most open-source metrics libraries
-that you already use.
+Autometrics can be incrementally adopted to work with most open-source metrics
+libraries that you already use.
