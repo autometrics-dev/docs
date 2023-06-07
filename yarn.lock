@@ -182,6 +182,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ndhoule/each@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@ndhoule/each@npm:2.0.1"
+  dependencies:
+    "@ndhoule/keys": ^2.0.0
+  checksum: f2aa44fb4248b2939b038c6cdbfb442f29cebb181f6058081b9af402c8c6e1e82a26fd9d89c2a2fc72be98b934902ecdf260bcfff171fa48aea4261a26a0e0c7
+  languageName: node
+  linkType: hard
+
+"@ndhoule/keys@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@ndhoule/keys@npm:2.0.0"
+  checksum: f77be060eb706a072e9c41d8939dcbd7bf27ead2f113a75fd9718b3c6a623540f324f7200e474418feb6277f1b99952b67667129bd66a39fdf93531980066488
+  languageName: node
+  linkType: hard
+
+"@ndhoule/map@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@ndhoule/map@npm:2.0.1"
+  dependencies:
+    "@ndhoule/each": ^2.0.1
+  checksum: b3bffd71babe9b9cdb882bd89d7785bb36d6063d44757aa7ed726a15a5d3c2ecb5198dbcda43a63d4585b4dfed96e2bd75b7b54bc1b5e44c58945118a2304d5c
+  languageName: node
+  linkType: hard
+
 "@next/env@npm:13.4.1":
   version: 13.4.1
   resolution: "@next/env@npm:13.4.1"
@@ -298,6 +323,15 @@ __metadata:
   version: 12.0.0
   resolution: "@rometools/cli-win32-x64@npm:12.0.0"
   conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@segment/snippet@npm:^4.16.0":
+  version: 4.16.0
+  resolution: "@segment/snippet@npm:4.16.0"
+  dependencies:
+    "@ndhoule/map": ^2.0.1
+  checksum: d73a7ddadbd7e983330a2a29de34cba85811037deb040374579d053030caf0da04b9a80b9aa3eaf600d0d465e7e8750d8c8edee9b0d3184f1e0ccf306590c7b1
   languageName: node
   linkType: hard
 
@@ -524,6 +558,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "autometrics-docs@workspace:."
   dependencies:
+    "@segment/snippet": ^4.16.0
     "@types/node": 18.11.10
     "@types/react": 18.2.0
     next: ^13.0.6
