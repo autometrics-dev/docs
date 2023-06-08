@@ -4,7 +4,6 @@ import * as snippet from "@segment/snippet";
 
 export default function Nextra({ Component, pageProps }) {
   const loadSegment = () => {
-    console.log("loading segment");
     const options = {
       apiKey: process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY,
     };
@@ -16,10 +15,16 @@ export default function Nextra({ Component, pageProps }) {
   };
 
   useEffect(() => {
-    if (window && window.analytics) {
-      window.analytics.page("Testing 123");
-      // console.log("analytics loaded");
-    } else {
+    if (window && window.analytics)
+      // NOTE - This will track virtual page views when transitioning client side,
+      //        but we lack descriptive page names.
+      //        To add page names, we can either set a `pageName` prop on the Components themselves,
+      //        or make use of getStaticProps in all of the pages to set the page name on page Props, then pass it to the function here
+      //        See the following:
+      //          - https://javascript.plainenglish.io/add-segment-google-analytics-to-your-typescript-next-js-app-af9fc7cd83a9
+      //          - https://morganfeeney.com/guides/how-to-integrate-google-tag-manager-with-nextjs
+      window.analytics.page(null);
+    else {
       // console.log("analytics not loaded");
     }
   }, []);
