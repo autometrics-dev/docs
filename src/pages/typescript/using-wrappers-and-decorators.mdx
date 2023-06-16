@@ -19,8 +19,7 @@ Use function wrappers to wrap request handlers, database calls, or other
 pieces of important business logic that you want to measure.
 
 <Callout type="info">
-    Wrapped functions must be named. Autometrics will, not affect the wrapped
-    function but will log an error if it can't access the name of the function.
+    Wrapped functions must be named. Anonymous (arrow) functions will not be instrumented.
 </Callout>
 
 Example:
