@@ -1,9 +1,12 @@
+import { Callout } from "nextra-theme-docs"
 
-# Using wrappers and decorators in
+# Using wrappers and decorators
 
 ## Node.js
 
-Use Autometrics wrappers to instrument the functions you want to track (e.g.:
+Use the Autometrics wrappers and decorators to instrument the functions you want
+to track. Usually it makes sense to wrap functions that are doing some business
+logic, making network calls, or are otherwise critical to the service (e.g.:
 request handlers or database calls).
 
 ### Wrapping plain-old functions
@@ -15,8 +18,10 @@ additional information in the type docs.
 Use function wrappers to wrap request handlers, database calls, or other
 pieces of important business logic that you want to measure.
 
-> **Note**: Wrapped functions must be named. Autometrics will throw an error if
-> it can't access the name of the function.
+<Callout type="info">
+    Wrapped functions must be named. Autometrics will, not affect the wrapped
+    function but will log an error if it can't access the name of the function.
+</Callout>
 
 Example:
 
@@ -71,9 +76,10 @@ export class AppController {
 
 ## Browser (Experimental)
 
-> **Note**
-> Support for client-side use of the Autometrics library is still very early and
-> experimental.
+<Callout type="warning">
+    Support for client-side use of the Autometrics library is still very early and
+    experimental. Things are likely to break in unexpected places.
+</Callout>
 
 ### Set up the push gateway
 
