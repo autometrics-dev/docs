@@ -6,7 +6,7 @@ const config: DocsThemeConfig = {
   logo: <Logo />,
   darkMode: false,
   nextThemes: {
-    forcedTheme: "light"
+    forcedTheme: "light",
   },
   project: {
     link: "https://github.com/autometrics-dev",
@@ -23,6 +23,7 @@ const config: DocsThemeConfig = {
   docsRepositoryBase: "https://github.com/autometrics-dev/docs",
   sidebar: {
     toggleButton: true,
+    defaultMenuCollapseLevel: 1,
   },
   footer: {
     text: (
