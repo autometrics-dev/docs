@@ -11,12 +11,9 @@ request handlers or database calls).
 
 ### Wrapping plain-old functions
 
-Wrappers are simple functions that wrap the original function declaration and
-instrument it with metrics. They also enable the language service plugin to add
-additional information in the type docs.
+Wrappers are simple functions that wrap the original function declaration and instrument it with metrics. They also enable the language service plugin to add additional information in the type docs and the VSCode extension to link to the graphs.
 
-Use function wrappers to wrap request handlers, database calls, or other
-pieces of important business logic that you want to measure.
+Use function wrappers to wrap request handlers, database calls, or other pieces of important business logic that you want to measure.
 
 <Callout type="info">
     Wrapped functions must be named. Anonymous (arrow) functions will not be instrumented.
@@ -36,8 +33,7 @@ createUserWithMetrics();
 
 ### Decorating class methods
 
-When using a decorator for a class method, it is wrapped in additional code that
-instruments the method with metrics.
+When using a decorator for a class method, it is wrapped in additional code that instruments the method with metrics.
 
 Here's a snippet from a NestJS example project that uses Autometrics:
 
@@ -76,8 +72,7 @@ export class AppController {
 ## Browser (Experimental)
 
 <Callout type="warning">
-    Support for client-side use of the Autometrics library is still very early and
-    experimental. Things are likely to break in unexpected places.
+    Support for client-side use of the Autometrics library is still very early and experimental. Things are likely to break in unexpected places.
 </Callout>
 
 ### Set up the push gateway
