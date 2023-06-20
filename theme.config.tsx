@@ -6,7 +6,7 @@ const config: DocsThemeConfig = {
   logo: <Logo />,
   darkMode: false,
   nextThemes: {
-    forcedTheme: "light"
+    forcedTheme: "light",
   },
   project: {
     link: "https://github.com/autometrics-dev",
@@ -19,10 +19,23 @@ const config: DocsThemeConfig = {
       titleTemplate: "%s | Autometrics",
     };
   },
+  head: (
+    <>
+      <meta
+        property="og:title"
+        content="Autometrics - Developer-first Observability Framework"
+      />
+      <meta
+        property="og:description"
+        content="Autometrics is a developer-first observability framework for understanding the error rate, response time, and  production usage of any function in your code. Implemented in Rust, Typescript, Golang and Python. Built on Open Telemetry and Prometheus."
+      />
+    </>
+  ),
   primaryHue: 240,
   docsRepositoryBase: "https://github.com/autometrics-dev/docs",
   sidebar: {
     toggleButton: true,
+    defaultMenuCollapseLevel: 1,
   },
   footer: {
     text: (

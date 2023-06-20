@@ -1,0 +1,29 @@
+## Configuration
+
+### Set your own Exporter
+
+By default, Autometrics exposes your metrics with OpenTelemetry's Prometheus
+Exporter on port `:9464`, using the endpoint `/metrics`. You can configure it as
+you wish, however, by using the `init` function.
+
+Here is an example that sets the exporter to use port `7777`:
+
+```javascript
+import { autometrics, init } from "@autometrics/autometrics";
+import { PrometheusExporter } from "@opentelemetry/exporter-prometheus";
+
+const exporter = new PrometheusExporter({ port: 7777 });
+init({ exporter });
+```
+
+### Language service plugin
+
+The language service plugin can be configured in the `tsconfig.json` file.
+
+#### Options
+
+| key             | description                                                     |
+| --------------- | --------------------------------------------------------------- |
+| `name`          | always `@autometrics/typescript-plugin`                         |
+| `prometheusUrl` | sets the base URL for PromQL queries. Default: `localhost:9090` |
+
