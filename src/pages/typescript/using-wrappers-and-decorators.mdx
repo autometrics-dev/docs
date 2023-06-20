@@ -72,7 +72,7 @@ export class AppController {
 ## Browser (Experimental)
 
 <Callout type="warning">
-    Support for client-side use of the Autometrics library is still very early and experimental. Things are likely to break in unexpected places.
+    Support for client-side use of the Autometrics library is limited and experimental. Things are likely to break in unexpected places.
 </Callout>
 
 ### Set up the push gateway
@@ -91,12 +91,9 @@ init({ pushGateway: "<link_to_gateway>" });
 
 ### Use Autometrics wrapper with options
 
-The same wrapper functions can be used in browser environments. Note that
-bundlers often change the names of functions and modules in production, which
-can impact the library.
+The same wrapper functions can be used in browser environments. Note that bundlers minify code and obfuscate the names of functions and modules in production.
 
-To get around this issue, wrappers accept an options object as
-their first argument, which explicitly assigns a function and module name.
+To get around this issue, wrappers accept an options object as their first argument, which explicitly assigns a function and module name.
 
 ```typescript
 const myFunction = autometrics(
