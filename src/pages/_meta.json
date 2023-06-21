@@ -2,6 +2,7 @@
   "index": "Introduction",
   "why-autometrics": "Why Autometrics?",
   "features": "Features",
+  "local-development": "Local Development",
   "languages": {
     "type": "separator",
     "title": "Languages"
