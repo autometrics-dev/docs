@@ -1,0 +1,37 @@
+import { Steps, Tabs, Tab } from "nextra-theme-docs";
+
+# Local development
+
+Autometrics CLI enables a proper local workflow for developer metrics. You can add, test, and see the immediate effect of adding metrics to your functions in the Explorer UI. Your changes now won't require a full cycle of *change-commit-deploy-to-dev* to see if it reflects as you intended in your monitoring dashboard.
+
+### Why locally?
+
+- **Iterate faster**. Add, change, and validate metrics locally without having to commit and deploy to dev.
+- **Collaborate easier**. Anyone on the team can experiment and share learnings from metrics without lengthy setup.
+
+## How it works
+
+When you run `am start <PORT>` in your terminal, the CLI will check if you have an available Prometheus binary on your computer. If not, it will download the latest version of Prometheus and start it on the port you specified. 
+
+It will also start a web server with the Autometrics Explorer UI in which you can explore your instrumented functions and see the metrics they generate.
+
+![Explorer UI screenshot](/images/explorer_ui.png)
+
+## Getting started with `am`
+
+<Steps>
+
+### Install the CLI
+
+```shell filename="$ shell"
+brew install am
+```
+
+### Start Prometheus and Explorer UI
+
+```shell filename="$ shell"
+am start <PORT>
+# <PORT> - the port number your /metrics endpoint is running on and exposes metrics
+```
+</Steps>
+
