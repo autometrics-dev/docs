@@ -6,10 +6,11 @@ const config: DocsThemeConfig = {
   logo: <Logo />,
   darkMode: false,
   banner: {
-    key: "2.0-release",
+    key: "cli-release",
     text: (
       <a href="/local-development" target="_blank" rel="noreferrer">
-        New release: run Prometheus locally and validate your metrics with the Autometrics CLI 🎉
+        Run Prometheus locally and validate your metrics with the Autometrics
+        CLI and Explorer 📈
       </a>
     ),
   },
@@ -18,6 +19,9 @@ const config: DocsThemeConfig = {
   },
   project: {
     link: "https://github.com/autometrics-dev",
+  },
+  toc: {
+    float: true,
   },
   chat: {
     link: "https://discord.gg/MJr7pYzZQ4",
