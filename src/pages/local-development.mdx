@@ -11,9 +11,9 @@ Autometrics CLI enables a proper local workflow for developer metrics. You can a
 
 ## How it works
 
-When you run `am start <PORT>` in your terminal, the CLI will check if you have an available Prometheus binary on your computer. If not, it will download the latest version of Prometheus and start it on the port you specified. 
+When you run `am start <METRICS_ENDPOINTS>` in your terminal, the CLI will check if you have an available Prometheus binary on your computer. If not, it will download the latest version of Prometheus and start it on the port you specified. 
 
-It will also start a web server with the Autometrics Explorer UI in which you can explore your instrumented functions and see the metrics they generate.
+It will also start a web server with the Autometrics Explorer in which you can explore your instrumented functions and see the metrics they generate.
 
 ![Explorer UI screenshot](/images/explorer_ui.png)
 
@@ -23,15 +23,50 @@ It will also start a web server with the Autometrics Explorer UI in which you ca
 
 ### Install the CLI
 
-```shell filename="$ shell"
-brew install am
-```
+You can install the CLI using Homebrew or by downloading the binary directly.
+
+<Tabs items={['macOS', 'Linux']}>
+    <Tab>
+        ```shell filename="$ shell"
+        brew install autometrics-dev/am
+        ```
+    </Tab>
+    <Tab>
+        ```shell filename="$ shell"
+        curl ...
+        ```
+    </Tab>
+
+</Tabs>
+
 
 ### Start Prometheus and Explorer UI
 
+You can then start the Prometheus server and Explorer by running the following command in your terminal:
+
 ```shell filename="$ shell"
-am start <PORT>
-# <PORT> - the port number your /metrics endpoint is running on and exposes metrics
+am start <METRICS_ENDPOINTS>
 ```
+`<METRICS_ENDPOINTS>` - one or more port number + URL path combinations that expose metrics in the Prometheus format. The format you express your endpoint is quite flexible so any of the following will work:
+
+| `METRICS_ENDPOINT` | Resolved URL |
+| -------- | --- |
+| `am start :3000` | http://localhost:3000/metrics |
+| `am start 127.0.0.1` | http://127.0.0.1:80/metrics |
+| `am start https://127.0.0.1` | https://127.0.0.1:443/metrics |
+| `am start localhost:3030` | http://localhost:3030/metrics |
+| `am start localhost:3030/api/metrics` | http://localhost:3030/api/metrics |
+| `am start localhost:3030/api/observability` | http://localhost:3030/api/observability |
+
+
+
+
+### Go to the Explorer
+
+You can now navigate to http://localhost:6789 to see the Explorer. You can also see the Prometheus at http://localhost:9090.
+
 </Steps>
+
+
+See the [CLI reference](/local-development/cli-reference) for more details on the CLI commands and options.
 
