@@ -5,6 +5,14 @@ import Logo from "./src/components/Header/Logo";
 const config: DocsThemeConfig = {
   logo: <Logo />,
   darkMode: false,
+  banner: {
+    key: "2.0-release",
+    text: (
+      <a href="/local-development" target="_blank" rel="noreferrer">
+        New release: run Prometheus locally and validate your metrics with the Autometrics CLI 🎉
+      </a>
+    ),
+  },
   nextThemes: {
     forcedTheme: "light",
   },
