@@ -14,7 +14,7 @@ Github Action [`diff-metrics`](https://github.com/autometrics-dev/diff-metrics) 
 Note: the action currently only works on Rust projects. Support for other languages is coming soon. See the [Language support](#language-support) section for more details.
 </Callout>
 
-Autometrics Report is a Github Action that can be integrated in your pipeline. Once on each Pull Request it does the following:
+On each Pull Request `diff-metrics` does the following:
 - traverses the diff looking for changes in the Autometrics instrumentation;
 - writes comments on a pull request showing you the monitoring impact of the incoming pull request;
 - saves the data used to compute this report as workflow artifacts. Workflow artifacts stay private to the repository that created them, but this allows for further processing if need be.
