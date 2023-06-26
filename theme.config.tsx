@@ -43,7 +43,7 @@ const config: DocsThemeConfig = {
       />
     </>
   ),
-  primaryHue: 240,
+  primaryHue: 269,
   docsRepositoryBase: "https://github.com/autometrics-dev/docs",
   sidebar: {
     toggleButton: true,
