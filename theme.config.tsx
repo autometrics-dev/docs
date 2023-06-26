@@ -33,6 +33,18 @@ const config: DocsThemeConfig = {
   },
   head: (
     <>
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href="/favicon/AutometricsFavicon-16x16.png"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="/favicon/AutometricsFavicon-32x32.png"
+      />
       <meta
         property="og:title"
         content="Autometrics - Developer-first Observability Framework"
