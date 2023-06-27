@@ -45,10 +45,14 @@ You can install the CLI using Homebrew or by downloading the binary directly.
     </Tab>
     <Tab>
         ```shell filename="arm64"
-        curl https://github.com/autometrics-dev/am/releases/latest/download/am-linux-aarch64
+        curl -L https://github.com/autometrics-dev/am/releases/latest/download/am-linux-aarch64 -o am
+        # make it executable with chmod
+        chmod u+x am
         ```
         ```shell filename="x86_64"
-        curl https://github.com/autometrics-dev/am/releases/latest/download/am-linux-x86_64
+        curl -L https://github.com/autometrics-dev/am/releases/latest/download/am-linux-x86_64 -o am
+        # make it executable with chmod
+        chmod u+x am
         ```
     </Tab>
 
@@ -60,7 +64,7 @@ You can install the CLI using Homebrew or by downloading the binary directly.
 You can then start the Prometheus server and Explorer by running the following command in your terminal:
 
 ```shell filename="$ shell"
-am start <METRICS_ENDPOINTS>
+./am start <METRICS_ENDPOINTS>
 ```
 `<METRICS_ENDPOINTS>` - one or more port number + URL path combinations that expose metrics in the Prometheus format. The format you express your endpoint is quite flexible so any of the following will work:
 
