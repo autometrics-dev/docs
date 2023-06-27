@@ -1,0 +1,31 @@
+import ConfiguringPrometheus from "@/components/ConfiguringPrometheus.tsx";
+import { Cards, Card } from "nextra-theme-docs"
+
+# Configuring Prometheus
+
+To see your Autometrics-instrumented metrics, you'll need to run [Prometheus](https://prometheus.io). Prometheus is pull-based, meaning it will poll your app on an endpoint you specify to sample the metrics.
+
+## Prometheus locally
+
+Here's how you can setup Prometheus locally:
+
+<Cards num={1}>
+	<Card
+	children
+	icon
+	title="Run Prometheus using Autometrics CLI (Recommended)"
+	href="/local-development"
+	/>
+	<Card
+	children
+	icon
+	title="Run Prometheus manually"
+	href="/configuring-prometheus/local"
+	/>
+</Cards>
+
+## Prometheus in production
+
+If you've already tried out Autometrics with Prometheus locally and want to set it up in production, see instructions below for specific deploy targets.
+
+<ConfiguringPrometheus />

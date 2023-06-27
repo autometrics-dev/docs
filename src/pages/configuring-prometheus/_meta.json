@@ -1,5 +1,5 @@
 {
   "local": "Local",
-  "fly-io": "Fly.io",
-  "kubernetes": "Kubernetes"
+  "kubernetes": "Kubernetes",
+  "fly-io": "Fly.io"
 }

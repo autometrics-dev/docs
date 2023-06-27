@@ -2,6 +2,8 @@
   "index": "Introduction",
   "why-autometrics": "Why Autometrics?",
   "features": "Features",
+  "local-development": "Local Development",
+  "ci-cd": "CI/CD",
   "languages": {
     "type": "separator",
     "title": "Languages"

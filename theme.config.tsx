@@ -5,11 +5,23 @@ import Logo from "./src/components/Header/Logo";
 const config: DocsThemeConfig = {
   logo: <Logo />,
   darkMode: false,
+  banner: {
+    key: "cli-release",
+    text: (
+      <a href="/local-development" target="_blank" rel="noreferrer">
+        Run Prometheus locally and validate your metrics with the Autometrics
+        CLI and Explorer 📈
+      </a>
+    ),
+  },
   nextThemes: {
     forcedTheme: "light",
   },
   project: {
     link: "https://github.com/autometrics-dev",
+  },
+  toc: {
+    float: true,
   },
   chat: {
     link: "https://discord.gg/MJr7pYzZQ4",
@@ -21,6 +33,18 @@ const config: DocsThemeConfig = {
   },
   head: (
     <>
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href="/favicon/AutometricsFavicon-16x16.png"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="/favicon/AutometricsFavicon-32x32.png"
+      />
       <meta
         property="og:title"
         content="Autometrics - Developer-first Observability Framework"
@@ -31,7 +55,7 @@ const config: DocsThemeConfig = {
       />
     </>
   ),
-  primaryHue: 240,
+  primaryHue: 269,
   docsRepositoryBase: "https://github.com/autometrics-dev/docs",
   sidebar: {
     toggleButton: true,
