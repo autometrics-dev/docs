@@ -1,4 +1,5 @@
 import { Callout, Steps, Tabs, Tab } from "nextra-theme-docs";
+import PreviewMetricsInExplorerSnippet from "@/snippets/preview-in-am-explorer.mdx"
 
 # Getting started in Go
 
@@ -108,8 +109,16 @@ func main() {
 }
 ```
 
-This is the shortest way to initialize and expose the metrics that autometrics will use
-in the generated code.
+This is the shortest way to initialize and expose the metrics that autometrics will use in the generated code.
+
+You're set! You can now start your app and preview the metrics.
+
+</Steps>
+
+## Viewing the metrics
+
+### Using Autometrics Explorer
+<PreviewMetricsInExplorerSnippet/>
 
 ### Configure your Prometheus
 
@@ -130,6 +139,3 @@ scrape_configs:
     # longer but for testing, you want the data to show up quickly
     scrape_interval: 200ms
 ```
-
-
-</Steps>
