@@ -10,7 +10,7 @@ import PreviewMetricsInExplorerSnippet from "@/snippets/preview-in-am-explorer.m
 
 <Tabs items={['npm', 'yarn', 'pnpm']}>
   <Tab>
-  ```bash copy
+  ```bash
   npm install autometrics
   ```
   </Tab>
@@ -28,7 +28,7 @@ import PreviewMetricsInExplorerSnippet from "@/snippets/preview-in-am-explorer.m
 
 ### Import the library in your code
 
-```ts copy
+```ts
 import { autometrics } from 'autometrics';
 ```
 
@@ -62,7 +62,7 @@ Install the [Autometrics VSCode extension](https://marketplace.visualstudio.com/
 
 Alternatively, if you're using a different IDE, you can use the TypeScript plugin directly:
   
-```bash copy
+```bash
 npm install @autometrics/typescript-plugin --save-dev
 ```
 
@@ -94,7 +94,7 @@ See the [Configuring Prometheus](/configuring-prometheus) section for deploy tar
 
 Example configuration:
 
-```yaml copy
+```yaml
 scrape_configs:
   - job_name: my-app
     metrics_path: /metrics
