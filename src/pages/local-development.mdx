@@ -113,12 +113,15 @@ url = "http://localhost:9090"
 
 ### Specification
 
+This section describes all the configuration items that can be used in the
+`am.toml` file.
+
 | Item | Type | Description |
 | ---- | ---- | ----------- |
 | `pushgateway-enabled` | `boolean` | Whether to enable the Pushgateway |
-| `[[endpoint]]` | `array` | An array of endpoint configurations |
+| `[[endpoint]]` | `array of inline tables` | An array of inline [table endpoint](#endpoint) configurations |
 
-### Endpoint
+#### Endpoint
 
 | Item | Type | Description |
 | ---- | ---- | ----------- |
