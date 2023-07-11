@@ -89,15 +89,15 @@ You can now navigate to http://localhost:6789 to see the Explorer. You can also 
 
 ## Configuration
 
-You can define a configuration file in your application's repository called
-`am.toml` where you can define defaults that `am start` will use. This file uses
-the [TOML](https://toml.io/) format.
+`am` can be configured for each of your projects. In your project repository you
+can add a `am.toml` configuration file wherein you can define defaults when
+using `am start`.
 
 ### Example
 
-The following example shows all the different configuration items. If used with
-`am start`, it will start a pushgateway and adds two endpoints for Prometheus to
-sample the metrics from:
+The following example shows all the different configuration items. This will
+start a pushgateway and adds two endpoints for Prometheus to sample the metrics
+from:
 
 ```toml filename="am.toml"
 pushgateway-enabled = true
