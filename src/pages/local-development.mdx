@@ -97,15 +97,13 @@ details that you can define are the following:
 | ---- | ---- | ----------- |
 | `pushgateway-enabled` | `boolean` | Whether to enable the Pushgateway |
 | `[[endpoint]]` | `array` | An array of endpoint configurations |
-| ---- | ---- | ----------- |
 
 ### Endpoint
 
 | Item | Type | Description |
 | ---- | ---- | ----------- |
-| `job-name` | `string` | Job name as defined in Prometheus |
+| `job-name` | `string` | Job name as defined in Prometheus (needs to be unique) |
 | `url` | `string` | URL to the metrics endpoint (can use the shorthand notation) |
-| ---- | ---- | ----------- |
 
 ### Example
 
