@@ -15,7 +15,7 @@ Autometrics CLI is a simple utility that wraps a Prometheus server and includes 
 
 ![Explorer UI screenshot](/images/explorer_ui.png)
 
-When you run `am start <METRICS_ENDPOINTS>` in your terminal, the CLI will check if you have an available Prometheus binary on your computer. If not, it will download the latest version of Prometheus and start it on the port you specified. 
+When you run `am start <METRICS_ENDPOINTS>` in your terminal, the CLI will check if you have an available Prometheus binary on your computer. If not, it will download the latest version of Prometheus and start it on the port you specified.
 
 It will also start a web server (by default on `localhost:6789`) with the Autometrics Explorer in which you can explore your instrumented functions and see the metrics they generate.
 
@@ -24,7 +24,7 @@ It will also start a web server (by default on `localhost:6789`) with the Autome
 
 Prometheus is a popular open-source monitoring solution that is used by many companies to collect metrics from their applications. It is a [**pull-based** system](https://prometheus.io/docs/introduction/faq/#why-do-you-pull-rather-than-push), meaning that it periodically polls the metrics endpoints of your applications to collect the metrics.
 
-Therefore, you have to pass in the endpoints when running `am start` as arguments - Prometheus needs to know where to look for the data. 
+Therefore, you have to pass in the endpoints when running `am start` as arguments - Prometheus needs to know where to look for the data.
 </Callout>
 
 
@@ -87,5 +87,46 @@ You can now navigate to http://localhost:6789 to see the Explorer. You can also 
 </Steps>
 
 
-See the [CLI reference](/local-development/cli-reference) for more details on the CLI commands and options.
+## Configuration
 
+`am` can be configured for each of your projects. In your project repository you
+can add a `am.toml` configuration file wherein you can define defaults when
+using `am start`.
+
+### Example
+
+The following example shows all the different configuration items. This will
+start a pushgateway and adds two endpoints for Prometheus to sample the metrics
+from:
+
+```toml filename="am.toml"
+pushgateway-enabled = true
+
+[[endpoint]]
+job-name = "main_app"
+url = "http://localhost:3030"
+
+[[endpoint]]
+job-name = "another_app"
+url = "http://localhost:9090"
+```
+
+### Configuration reference
+
+This section describes all the configuration items that can be used in the
+`am.toml` file.
+
+| Item | Type | Description |
+| ---- | ---- | ----------- |
+| `pushgateway-enabled` | `boolean` | Whether to enable the Pushgateway |
+| `[[endpoint]]` | `array of inline tables` | An array of inline [table endpoint](#endpoint) configurations |
+
+#### Endpoint
+
+| Item | Type | Description |
+| ---- | ---- | ----------- |
+| `job-name` | `string` | Job name as defined in Prometheus (needs to be unique) |
+| `url` | `string` | URL to the metrics endpoint (can use the shorthand notation) |
+
+
+See the [CLI reference](/local-development/cli-reference) for more details on the CLI commands and options.
