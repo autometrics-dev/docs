@@ -3,7 +3,7 @@ title: Setting up SLOs with Express
 date: 2023-07-04
 ---
 
-import { Callout } from "nextra-theme-docs"
+import { Callout, Cards, Card } from "nextra-theme-docs"
 
 # Setting up SLOs with an Express
 
@@ -69,7 +69,7 @@ Let's take a toy example Express API that models a basic user directory. Current
 
 Our API code is split up into two modules (files):
 
--   server.ts - our main entry point, we'll focus on this file mostly for the guide;
+- `server.ts` - our main entry point, we'll focus on this file mostly for the guide;
 
 ```typescript filename="server.ts"
 import express, { Request, Response } from "express";
@@ -95,7 +95,7 @@ app.listen(3000, () => {
 
 ```
 
--   routes.ts  - where all of our handlers are defined.
+- `routes.ts`  - where all of our handlers are defined.
     
 ```typescript filename="routes.ts"
 import { Request, Response } from "express";
@@ -189,8 +189,9 @@ The `successRate` accepts the `ObjectivePercentile` enum value - for example `Ob
 
 The `latency` accepts a tuple `[A, B]` which should include the latency goal in milliseconds and similarly a percentile. So: `[ObjectiveLatency.Ms250, ObjectivePercentile.P99]` translates that we _expect 99% of requests to be completed within 250 milliseconds_.
 
+### Adding SLOs to our functions
 
-We can now pass in our `API_SLO` into each of our wrapped handlers:
+For each function we want to group into our SLO, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter. In our toy example we will group all of our handlers - in real usage you can extend it to group any underlying important functions as well.
 
 ```typescript filename="server.ts" {14-18}
 import { autometrics } from "@autometrics/autometrics"
@@ -212,3 +213,70 @@ app.post("/users", autometrics({ objective: API_SLO }, handleCreateUser));
 app.put("/users/:id", autometrics({ objective: API_SLO }, handleUpdateUser));
 app.delete("/users/:id", autometrics({ objective: API_SLO }, handleDeleteUser));
 ```
+
+#### Setting custom error values
+
+Autometrics by default registers an error when a given function throws an Error object. In top level functions like handlers we rarely want to throw the error back to user - it is a good practice to wrap any other function calls in the body of the function in a `try...catch` and return more informative errors to the user.
+
+To make sure Autometrics register the error correctly, you can pass in a `recordErrorIf` callback to determine whether to register the result as an error based on the return value. 
+
+For example in this case we want to register an error any time a route handler returns HTTP codes 4xx and 5xx. We can define the callback:
+
+```typescript
+const recordErrorIf = (res: express.Response) => {
+  return res.statusCode >= 400 && res.statusCode <= 599;
+};
+```
+
+And pass in this callback to the same `AutometricsOptions` object:
+
+```typescript filename="server.ts"
+const recordErrorIf = (res: express.Response) => {
+  return res.statusCode >= 400 && res.statusCode <= 599;
+};
+
+app.get("/users", autometrics({ recordErrorIf, objective: API_SLO }, handleGetAllUsers));
+app.get("/users/:id", autometrics({ recordErrorIf, objective: API_SLO }, handleGetUserById));
+app.post("/users", autometrics({ recordErrorIf, objective: API_SLO }, handleCreateUser));
+app.put("/users/:id", autometrics({ recordErrorIf, objective: API_SLO }, handleUpdateUser));
+app.delete("/users/:id", autometrics({ recordErrorIf, objective: API_SLO }, handleDeleteUser));
+```
+
+### Viewing the SLOs
+
+That's all for the instrumentation part!
+
+Autometrics will now emit metrics with special labels that Prometheus can group into. You can check out more how this works under the hood in [this blogpost](https://fiberplane.com/blog/an-adventure-with-slos-generic-prometheus-alerting-rules-and-complex-promql-queries).
+
+You can preview and validate the SLOs using the Autometrics CLI and Explorer. Navigate to the "SLO" tab in the top left to see an overview list of the SLOs you've just created (our example should have a single item named "api").
+
+If you're using Grafana you can load one of the pre-made [Autometrics dashboards](https://grafana.com/grafana/dashboards/18506-autometrics-service-level-objectives-slos/). You don't need to configure the dashboard - it will automatically pick up all Autometrics-generated data from your Prometheus and show a helpful SLO overview panel with the current score on the left side and the functions that comprise that SLO on your right:
+
+//IMAGE//
+
+### Configuring Alerts
+
+Finally, you can configure alerts for this setup.
+
+Grab the Autometrics alerting rule-set. No need to configure anything - the alerts will be dormant by default and activate only when they find SLO labels on Autometrics-instrumented data.
+
+<Cards num={2}>
+	<Card
+	children
+	icon
+	title="Autometrics alerting rules"
+    arrow
+	href="https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml"
+	/>
+</Cards>
+
+Load the file into Prometheus Alertmanager:
+
+### Recap
+
+And we're set!
+
+We started off with a simple Express application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
+
+A few things to note:
+- as mentioned earlier, SLOs are an art as much as science: a week after deploying this you will probably need to tweak them to your needs. The good news is that the only thing you need to change is the `API_SLO` object we've created at the beginning.
