@@ -101,10 +101,12 @@ from:
 
 ```toml filename="am.toml"
 pushgateway-enabled = true
+prometheus-scrape-interval = "1m"
 
 [[endpoint]]
 job-name = "main_app"
 url = "http://localhost:3030"
+prometheus-scrape-interval = "5s"
 
 [[endpoint]]
 job-name = "another_app"
@@ -119,6 +121,7 @@ This section describes all the configuration items that can be used in the
 | Item | Type | Description |
 | ---- | ---- | ----------- |
 | `pushgateway-enabled` | `boolean` | Whether to enable the Pushgateway |
+| `prometheus-scrape-interval` | `string` | Default scrape interval for all endpoints (For example `5s` for 5 seconds, `10m` for 10 minutes) |
 | `[[endpoint]]` | `array of inline tables` | An array of inline [table endpoint](#endpoint) configurations |
 
 #### Endpoint
@@ -127,6 +130,7 @@ This section describes all the configuration items that can be used in the
 | ---- | ---- | ----------- |
 | `job-name` | `string` | Job name as defined in Prometheus (needs to be unique) |
 | `url` | `string` | URL to the metrics endpoint (can use the shorthand notation) |
+| `prometheus-scrape-interval` | `string` | Scrape interval for this endpoint (For example `5s` for 5 seconds, `10m` for 10 minutes) |
 
 
 See the [CLI reference](/local-development/cli-reference) for more details on the CLI commands and options.
