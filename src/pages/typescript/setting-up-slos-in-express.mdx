@@ -11,46 +11,23 @@ In this guide we'll go over what are Service Level Objectives (SLO), why you wou
 
 ## Why SLOs
 
-Chances are - your uptime alerts aren't great.
-
-They may be either firing too often, bothering you enough to mute that Slack channel, or they are too slow at notifying when they should have and you end up getting calls from your customer support.
-
-If they're based on logs, they are likely relying on information that is delayed (e.g.: while your logs are ingesting) and may be unreliable (due to the changing nature of logs).
-
-Finally, they are also probably hard to use to assess how affected your users actually are by the error. If my `service_proxy_02` is acting up - what does that *actually* mean for people using the website?
-
-A better way to set up alerts is using the Service Level Objectives or SLOs. Popularized in the [Google SRE book](https://sre.google/workbook/implementing-slos/) - SLOs enable engineers to set up alerts for user-focused teams. SLO alerts align best with the user experience, e.g. response and error rates of a service, are actionable and can often give you a "gas leak" warning before the issue escalates.
-
-So how do they work?
+SLOs enable engineers to set up alerts for user-focused teams. SLO alerts align best with the user experience, e.g. response and error rates of a service, are actionable and can often give you a "gas leak" warning before the issue escalates.
 
 ## How SLOs work
 
-Here comes the ~science~ math bit:
+SLOs work on two principal ideas **error budgets** and **burn rates**. 
 
-SO how do they actually work? Well, there’s two key concepts that need to be understood in order to explain this, **error budgets** and **burn rates**.
-
-An error budget is the amount of errors that your SLO allows for during normal operations. For example if you have an error SLO of 99% over a 28 day period, then what you’re saying is that the service is allowed to throw 1% of errors over that period of time. For every 100 requests the service receives, one request can generate an error and the service is still working exactly to its SLO. This number of allowed errors is your error budget, they’re budgeted into the SLO. Put in mathematical terms the error budget can be described as:
-
-$\text{Error budget} = 1 - SLO$
+An **error budget** represents the allowable amount of errors or service disruptions that a service can experience within a given period without violating its agreed-upon reliability target. It can be represented as: $\text{Error budget} = 100\% - SLO$
 
 So for an SLO of 99% the error budget is:
 
-$1 - 0.99 = 0.01$
+$100\% - 99\% = 1\%$
 
-In practical terms this means that the error budget is one request in every hundred.
-
-The burn rate takes this a bit further. The burn rate is the rate at which a service is burning through its error budget, where a burn rate of 1 would perfectly consume the error budget within the time window. For our previous example with an SLO of 99.9% over a 28 day period a burn rate of 1 would be consistently having one request generate an error in every thousand requests for that 28 day period. If the burn rate increases above this then the service is burning its error budget too fast and will likely consume it before the 28 days is up. For example, a burn rate of 2 would mean that the error budget is consumed within just 14 days!
+The **burn rate** is the rate at which the error budget is being consumed or “burned” by incidents or errors that occur in a system or service. A burn rate of 1 or lower indicates that the service is currently burning its error budget at a rate that is within SLO targets. A burn rate higher than 1 indicates that the service is burning its error budget too quickly, and would result in a failed SLO if not addressed.
 
 The burn rate makes up the basis of the SLO-based alert.
 
 One final note before we dive in: SLOs are part-science and part-art. Hopefully this guide gives you a confident place to start, but you will likely need to tweak the values that fit your precise business needs and processes. The best way to learn SLOs after all, like any concept in engineering, is to go build with them.
-
-### How SLOs (and alerting) work in Autometrics
-
-In the languages that we have Autometrics library for, you can create your SLOs directly in the same code as your application.
-
-...
-    
 
 ## Implementing SLOs in Express (using Autometrics)
 
@@ -65,7 +42,7 @@ Ok let's get to the real part of this guide.
 
 </Callout>
 
-Let's take a toy example Express API that models a basic user directory. Currently it has a single endpoint /users where accepts requests to manage the user directory (create, update, delete users).
+We will take a toy example Express API that models a basic user directory and add SLO-based alerts to it. Currently it has a single endpoint `/users` where it accepts requests to manage the user directory (create, update, delete users).
 
 Our API code is split up into two modules (files):
 
@@ -244,7 +221,7 @@ app.delete("/users/:id", autometrics({ recordErrorIf, objective: API_SLO }, hand
 
 ### Viewing the SLOs
 
-That's all for the instrumentation part!
+That's all for the code-writing part!
 
 Autometrics will now emit metrics with special labels that Prometheus can group into. You can check out more how this works under the hood in [this blogpost](https://fiberplane.com/blog/an-adventure-with-slos-generic-prometheus-alerting-rules-and-complex-promql-queries).
 
@@ -256,21 +233,23 @@ If you're using Grafana you can load one of the pre-made [Autometrics dashboards
 
 ### Configuring Alerts
 
-Finally, you can configure alerts for this setup.
+Finally, based on this you can set up alerts inside Prometheus.
 
-Grab the Autometrics alerting rule-set. No need to configure anything - the alerts will be dormant by default and activate only when they find SLO labels on Autometrics-instrumented data.
+Grab the Autometrics alerting rule-set and append it to your Prometheus configuration. 
 
 <Cards num={2}>
-	<Card
-	children
-	icon
-	title="Autometrics alerting rules"
+    <Card
+    children
+    icon
+    title="Autometrics alerting rules"
     arrow
-	href="https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml"
-	/>
+    href="https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml"
+    />
 </Cards>
 
-Load the file into Prometheus Alertmanager:
+No need to configure anything else - the alerts will be dormant by default and activate _only_ when they find SLO labels on Autometrics-instrumented data.
+
+You can validate that the alerts are set by navigating to the "Alerts" tab in Prometheus UI.
 
 ### Recap
 
