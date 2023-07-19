@@ -3,61 +3,65 @@ title: Setting up SLOs with Express
 date: 2023-07-04
 ---
 
-import { Callout, Cards, Card } from "nextra-theme-docs"
+import { Callout, Cards, Card } from "nextra-theme-docs";
 
-# Setting up SLOs with an Express
+# Setting up SLOs in Express
 
-In this guide we'll go over what are Service Level Objectives (SLO), why you would want to adopt them for your alerting, and how you can accomplish that in your Express application.
+In this guide, we will explore Service Level Objectives (SLOs), their benefits when used for alerting, and provide a step-by-step walkthrough on implementing them in an Express application.
 
 ## Why SLOs
 
-SLOs enable engineers to set up alerts for user-focused teams. SLO alerts align best with the user experience, e.g. response and error rates of a service, are actionable and can often give you a "gas leak" warning before the issue escalates.
+SLOs empower engineers to establish user-centric alerts. These alerts, which focus on metrics like response and error rates, closely align with a user's experience. By design, SLO alerts often serve as an early warning, akin to detecting a "gas leak," allowing proactive measures before issues escalate.
 
 ## How SLOs work
 
-SLOs work on two principal ideas **error budgets** and **burn rates**. 
+SLOs work on two principal ideas: **error budgets** and **burn rates**.
 
-An **error budget** represents the allowable amount of errors or service disruptions that a service can experience within a given period without violating its agreed-upon reliability target. It can be represented as: $\text{Error budget} = 100\% - SLO$
+An **error budget** is a measure of the acceptable level of errors or service disruptions that a service can experience during a specified timeframe, without violating its agreed-upon reliability target. It can be represented as:
 
 So for an SLO of 99% the error budget is:
 
 $100\% - 99\% = 1\%$
 
-The **burn rate** is the rate at which the error budget is being consumed or “burned” by incidents or errors that occur in a system or service. A burn rate of 1 or lower indicates that the service is currently burning its error budget at a rate that is within SLO targets. A burn rate higher than 1 indicates that the service is burning its error budget too quickly, and would result in a failed SLO if not addressed.
+The **burn rate** represents the pace at which the error budget is being consumed or "burned" by errors within a system or service. A burn rate of 1 or less indicates that the service is currently burning its error budget at a rate that aligns with the SLO targets. Conversely, a burn rate exceeding 1 indicates that the service is burning its error budget too quickly, which would result in a failed SLO if not addressed.
 
 The burn rate makes up the basis of the SLO-based alert.
 
-One final note before we dive in: SLOs are part-science and part-art. Hopefully this guide gives you a confident place to start, but you will likely need to tweak the values that fit your precise business needs and processes. The best way to learn SLOs after all, like any concept in engineering, is to go build with them.
+One final note before we dive in: SLOs are a blend of science and art. While this guide provides a solid starting point, it's important to customize the values to align with your specific business requirements and processes.
+
+The best way to learn to use SLOs, like any engineering concept, is to go build with them.
 
 ## Implementing SLOs in Express (using Autometrics)
 
-Ok let's get to the real part of this guide.
+Alright, now let's jump into the heart of this guide.
 
 <Callout type="info">
 
 #### Pre-requisites
 
-- **Autometrics library for TypeScript/JavaScript** installed: see [quickstart](/typescript/quickstart) for installation instructions.
-- **Prometheus**. A powerful open source monitoring and alerting database that Autometrics is designed to interface with. You can get started with it locally quickly using the [Autometrics CLI](/local-development) or download the binary directly.
+- **Autometrics library for TypeScript/JavaScript**: Make sure you have the Autometrics library installed. See the [quickstart](/typescript/quickstart) for installation instructions.
+- **Prometheus**: Autometrics is designed to work with Prometheus, a powerful open-source monitoring and alerting database. To get started quickly, you can use the [Autometrics CLI](/local-development) or download the binary directly.
 
 </Callout>
 
-We will take a toy example Express API that models a basic user directory and add SLO-based alerts to it. Currently it has a single endpoint `/users` where it accepts requests to manage the user directory (create, update, delete users).
+We will use SLO-based alerts to enhance a simple Express API.
 
-Our API code is split up into two modules (files):
+This API sits in front of a user directory, and it accepts requests to create, update, and delete users.
 
-- `server.ts` - our main entry point, we'll focus on this file mostly for the guide;
+Our API code is divided into two files:
+
+- `server.ts` - This is our main entry point. We'll mostly focus on this file throughout the guide.
 
 ```typescript filename="server.ts"
 import express, { Request, Response } from "express";
-import { 
+import {
   handleCreateUser,
   handleDeleteUser,
   handleUpdateUser,
   handleGetAllUsers,
-  handleGetUserById
-} from "./routes.js"
-  
+  handleGetUserById,
+} from "./routes.js";
+
 const app = express();
 
 app.get("/users", handleGetAllUsers);
@@ -69,11 +73,10 @@ app.delete("/users/:id", handleDeleteUser);
 app.listen(3000, () => {
   console.log("Server started on port 3000");
 });
-
 ```
 
-- `routes.ts`  - where all of our handlers are defined.
-    
+- `routes.ts` - This is where all of our handlers are defined.
+
 ```typescript filename="routes.ts"
 import { Request, Response } from "express";
 
@@ -82,7 +85,7 @@ export function handleGetAllUsers(req: Request, res: Response) {
 }
 
 export function handleGetUserById(req: Request, res: Response) {
- // ...
+  // ...
 }
 
 export function handleCreateUser(req: Request, res: Response) {
@@ -97,14 +100,13 @@ export function handleDeleteUser(req: Request, res: Response) {
   // ...
 }
 ```
-  
 
 ### Adding Autometrics to the project
 
-The first thing we need to do is to make sure that we're generating the metrics necessary to create our SLOs. We can do that simply by wrapping our handlers in a `autometrics` higher order function.
-  
+Our first step is to generate the necessary metrics for our SLOs. We can do this by wrapping our route handlers with the `autometrics` higher order function.
+
 ```typescript filename="server.ts" {1,8-12}
-import { autometrics } from "@autometrics/autometrics"
+import { autometrics } from "@autometrics/autometrics";
 import express, { Request, Response } from "express";
 
 //...
@@ -116,26 +118,25 @@ app.get("/users/:id", autometrics(handleGetUserById));
 app.post("/users", autometrics(handleCreateUser));
 app.put("/users/:id", autometrics(handleUpdateUser));
 app.delete("/users/:id", autometrics(handleDeleteUser));
-
-
 ```
 
-You can use the same `autometrics` interface to continue wrapping other functions that are called inside your handlers, for example any functions that are calling out to the database or doing any other heavy business logic. 
+You can use the same `autometrics` interface to wrap other functions that are called inside your handlers. For example, you could also wrap functions that interact with the database or implement critical business logic.
 
-It's quite simple: the more you add - the better a picture you will be able to build from your metrics data.
+It's quite simple: The more you add, the more comprehensive and informative the metrics data will become, allowing you to build a clearer picture of your system's performance.
 
-For each wrapped function, autometrics will create metrics that are necessary to assess basic availability questions like:
-- Rate: how many requests has this function received?
-- Error: how many of them errored?
-- Duration: how long do the requests take?
+For each handler above, autometrics will generate metrics to answer core questions about availability, such as:
 
-These are the basic building blocks we'll use to build our Service Level Objectives.
+- Rate: How many requests has this function received?
+- Error: How many of the requests errored?
+- Duration: How long do the requests take?
+
+These are the basic building blocks that we'll use for our Service Level Objectives.
 
 ### Creating an SLO
 
-We can create our SLO right in the same place - the `@autometrics/autometrics` library includes helper utilities for that: `Objective`, `ObjectiveLatency`, `ObjectivePercentile`.
+We can create our SLO in the same `server.ts` file. The `@autometrics/autometrics` library includes helper utilities for SLOs: `Objective`, `ObjectiveLatency`, `ObjectivePercentile`.
 
-```typescript filename="server.ts"
+```typescript filename="server.ts" {3-5}
 import {
   autometrics,
   Objective,
@@ -145,33 +146,34 @@ import {
 import express, { Request, Response } from "express";
 
 // ...
-
 ```
-  
-All of these utilities are simply interfaces that you can use to create an object that we can then pass to each of our `autometrics` wrapped handlers. 
 
-Here's how that works.
+Using these utilities, we define our SLO as a plain-old-javascript-object, which we can then pass to each of our `autometrics` wrapped handlers.
+
+Here's how that works:
 
 ```typescript
 const API_SLO: Objective = {
-    name: "api",
-    successRate: ObjectivePercentile.P99,
-    latency: [ObjectiveLatency.Ms250, ObjectivePercentile.P99]
-}
+  name: "api",
+  successRate: ObjectivePercentile.P99,
+  latency: [ObjectiveLatency.Ms250, ObjectivePercentile.P99],
+};
 ```
 
-First, we create an `Objective` object that we're gonna call `API_SLO`. In this object we need to pass a descriptive `name`, and two parameters: `successRate` and `latency`. 
+First, we create an `Objective` object that we call `API_SLO`. We give the objective a descriptive `name` and two parameters: `successRate` and `latency`.
 
-The `successRate` accepts the `ObjectivePercentile` enum value - for example `ObjectivePercentile.P99` for an objective of success rate of 99%. 
+The `successRate` accepts a predefined precentile value (from the enum `ObjectivePercentile`). For example, `ObjectivePercentile.P99` would define a success rate of 99% for the objective.
 
-The `latency` accepts a tuple `[A, B]` which should include the latency goal in milliseconds and similarly a percentile. So: `[ObjectiveLatency.Ms250, ObjectivePercentile.P99]` translates that we _expect 99% of requests to be completed within 250 milliseconds_.
+The `latency` accepts a tuple `[A, B]` which should include the latency goal in milliseconds and, similarly, a percentile. So: `[ObjectiveLatency.Ms250, ObjectivePercentile.P99]` translates to: "_We expect 99% of requests to be completed within 250 milliseconds_."
 
 ### Adding SLOs to our functions
 
-For each function we want to group into our SLO, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter. In our toy example we will group all of our handlers - in real usage you can extend it to group any underlying important functions as well.
+For each function we want to group into our SLO, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter.
+
+For our user directory application, we will group all of our handlers into one objective. However, in real usage you can extend it to group any underlying important functions as well.
 
 ```typescript filename="server.ts" {14-18}
-import { autometrics } from "@autometrics/autometrics"
+import { autometrics } from "@autometrics/autometrics";
 import express, { Request, Response } from "express";
 
 //...
@@ -179,10 +181,10 @@ import express, { Request, Response } from "express";
 const app = express();
 
 const API_SLO: Objective = {
-    name: "api",
-    successRate: ObjectivePercentile.P99,
-    latency: [ObjectiveLatency.Ms250, ObjectivePercentile.P99]
-}
+  name: "api",
+  successRate: ObjectivePercentile.P99,
+  latency: [ObjectiveLatency.Ms250, ObjectivePercentile.P99],
+};
 
 app.get("/users", autometrics({ objective: API_SLO }, handleGetAllUsers));
 app.get("/users/:id", autometrics({ objective: API_SLO }, handleGetUserById));
@@ -195,7 +197,7 @@ app.delete("/users/:id", autometrics({ objective: API_SLO }, handleDeleteUser));
 
 Autometrics by default registers an error when a given function throws an Error object. In top level functions like handlers we rarely want to throw the error back to user - it is a good practice to wrap any other function calls in the body of the function in a `try...catch` and return more informative errors to the user.
 
-To make sure Autometrics register the error correctly, you can pass in a `recordErrorIf` callback to determine whether to register the result as an error based on the return value. 
+To make sure Autometrics register the error correctly, you can pass in a `recordErrorIf` callback to determine whether to register the result as an error based on the return value.
 
 For example in this case we want to register an error any time a route handler returns HTTP codes 4xx and 5xx. We can define the callback:
 
@@ -212,11 +214,26 @@ const recordErrorIf = (res: express.Response) => {
   return res.statusCode >= 400 && res.statusCode <= 599;
 };
 
-app.get("/users", autometrics({ recordErrorIf, objective: API_SLO }, handleGetAllUsers));
-app.get("/users/:id", autometrics({ recordErrorIf, objective: API_SLO }, handleGetUserById));
-app.post("/users", autometrics({ recordErrorIf, objective: API_SLO }, handleCreateUser));
-app.put("/users/:id", autometrics({ recordErrorIf, objective: API_SLO }, handleUpdateUser));
-app.delete("/users/:id", autometrics({ recordErrorIf, objective: API_SLO }, handleDeleteUser));
+app.get(
+  "/users",
+  autometrics({ recordErrorIf, objective: API_SLO }, handleGetAllUsers)
+);
+app.get(
+  "/users/:id",
+  autometrics({ recordErrorIf, objective: API_SLO }, handleGetUserById)
+);
+app.post(
+  "/users",
+  autometrics({ recordErrorIf, objective: API_SLO }, handleCreateUser)
+);
+app.put(
+  "/users/:id",
+  autometrics({ recordErrorIf, objective: API_SLO }, handleUpdateUser)
+);
+app.delete(
+  "/users/:id",
+  autometrics({ recordErrorIf, objective: API_SLO }, handleDeleteUser)
+);
 ```
 
 ### Viewing the SLOs
@@ -235,16 +252,16 @@ If you're using Grafana you can load one of the pre-made [Autometrics dashboards
 
 Finally, based on this you can set up alerts inside Prometheus.
 
-Grab the Autometrics alerting rule-set and append it to your Prometheus configuration. 
+Grab the Autometrics alerting rule-set and append it to your Prometheus configuration.
 
 <Cards num={2}>
-    <Card
+  <Card
     children
     icon
     title="Autometrics alerting rules"
     arrow
     href="https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml"
-    />
+  />
 </Cards>
 
 No need to configure anything else - the alerts will be dormant by default and activate _only_ when they find SLO labels on Autometrics-instrumented data.
@@ -258,4 +275,5 @@ And we're set!
 We started off with a simple Express application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
 
 A few things to note:
+
 - as mentioned earlier, SLOs are an art as much as science: a week after deploying this you will probably need to tweak them to your needs. The good news is that the only thing you need to change is the `API_SLO` object we've created at the beginning.
