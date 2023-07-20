@@ -20,15 +20,17 @@ These measurements can help build **indicators** of the service performance.
 
 For example, in a payment service it would be important to measure how many payment requests are successful and how long payments take to make. The indicator for each could be as follows: 
 
-> **Success rate** = percentage of payment requests that completed successfully without an error
-
-> **Latency** = the latency measurement for the 99th percentile of payment requests i.e the time within which 99% of user requests occur
+<Callout type="info">
+- **Success rate** = percentage of payment requests that completed successfully without an error
+- **Latency** = the latency measurement for the 99th percentile of payment requests i.e the time within which 99% of user requests occur
+</Callout>
 
 With these indicators defined you can then create an SLO based on how reliable you want the service to be. Using our indicators above we could create two SLOs:
 
-> **Success rate** = 99% of payment requests successfully completed over a 30 day period
-
-> **Latency** = 99% of requests completed within 250 ms over a 30 day period
+<Callout type="info">
+- **Success rate SLO** = 99% of payment requests successfully completed over a 30 day period
+- **Latency SLO** = 99% of requests completed within 250 ms over a 30 day period
+</Callout>
 
 Notice how the SLOs take our indicators and provide a clear definition of the expected level of quality as well as a timeframe over which to measure this level of quality. 
 

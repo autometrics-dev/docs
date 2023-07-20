@@ -2,7 +2,7 @@
 title: Setting up SLOs with Express
 ---
 
-import { Callout, Cards, Card } from "nextra-theme-docs";
+import { Callout, Cards, Card, FileTree, Steps } from "nextra-theme-docs";
 
 # Setting up SLOs in Express
 
@@ -36,6 +36,7 @@ The best way to learn to use SLOs, like any engineering concept, is to go build 
 
 Alright, now let's jump into the heart of this guide.
 
+
 <Callout type="info">
 
 #### Pre-requisites
@@ -50,6 +51,13 @@ We will use SLO-based alerts to enhance a simple Express API.
 This API sits in front of a user directory, and it accepts requests to create, update, and delete users.
 
 Our API code is divided into two files:
+
+<FileTree>
+    <FileTree.Folder name="src" defaultOpen>
+        <FileTree.File name="server.ts" />
+        <FileTree.File name="routes.ts" />
+    </FileTree.Folder>
+</FileTree>
 
 - `server.ts` - This is our main entry point. We'll mostly focus on this file throughout the guide.
 
@@ -101,6 +109,8 @@ export function handleDeleteUser(req: Request, res: Response) {
   // ...
 }
 ```
+
+<Steps>
 
 ### Adding Autometrics to the project
 
@@ -275,6 +285,6 @@ And we're set!
 
 We started off with a simple Express application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
 
-A few things to note:
+As mentioned earlier, SLOs are an art as much as science: a week after deploying this you will probably need to tweak them to your needs. The good news is that the only thing you need to change is the `API_SLO` object we've created at the beginning.
 
-- as mentioned earlier, SLOs are an art as much as science: a week after deploying this you will probably need to tweak them to your needs. The good news is that the only thing you need to change is the `API_SLO` object we've created at the beginning.
+</Steps>
