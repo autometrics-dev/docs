@@ -4,6 +4,7 @@
 	"features": "Features",
 	"local-development": "Local Development",
 	"ci-cd": "CI/CD",
+	"slo": "Service Level Objectives",
 	"languages-frameworks": {
 		"type": "separator",
 		"title": "Languages & Frameworks"

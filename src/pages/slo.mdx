@@ -1,0 +1,85 @@
+---
+title: Service Level Objectives (SLO)
+---
+
+import { Callout, Cards, Card } from "nextra-theme-docs"
+
+# Service Level Objectives
+
+Service Level Objectives (SLOs) are a powerful tool that, when done correctly, can provide a lot of benefits to your team in terms of reliability but even resource allocation! 
+
+What are they? Why are they so important? Let's take a closer look…
+
+## What are SLOs?
+
+Put simply, an SLO is an agreed objective, expressed as a percentage over a set period of time, relating to service quality or reliability for something deemed important for the service. What is deemed important? Depends on the service but it is almost always related to the **latency** or **error rate** of user interactions, because ultimately these are what are important to the service. 
+
+These measurements can help build **indicators** of the service performance.
+
+(Technically called *Service Level Indicators*, however, to reduce the amount of SL* terminology we'll just call them indicators here)
+
+For example, in a payment service it would be important to measure how many payment requests are successful and how long payments take to make. The indicator for each could be as follows: 
+
+> **Success rate** = percentage of payment requests that completed successfully without an error
+
+> **Latency** = the latency measurement for the 99th percentile of payment requests i.e the time within which 99% of user requests occur
+
+With these indicators defined you can then create an SLO based on how reliable you want the service to be. Using our indicators above we could create two SLOs:
+
+> **Success rate** = 99% of payment requests successfully completed over a 30 day period
+
+> **Latency** = 99% of requests completed within 250 ms over a 30 day period
+
+Notice how the SLOs take our indicators and provide a clear definition of the expected level of quality as well as a timeframe over which to measure this level of quality. 
+
+## Why use SLOs?
+
+Put simply, SLOs help set clear expectations and provide a basis for evaluating the performance of a service. As the objectives are agreed amongst all parties, and use quantitative measurements, it's possible to answer the question  "Are we providing our users an acceptable quality of service?". With the answer to this question it's possible to do a number of things:
+
+**Focus on customer needs**: SLOs encourage service providers to align their efforts with the specific needs of their customers. By defining performance targets based on customer requirements, SLOs help prioritize and allocate resources to areas that directly impact customer satisfaction and experience.
+
+**Performance monitoring**: SLOs require ongoing monitoring of relevant metrics to assess whether the service is meeting the defined objectives. This monitoring allows for early detection of performance issues or deviations from the target, enabling prompt corrective actions to maintain or improve service quality. 
+
+**Better alerting**: By creating SLOs that are tracking what is really important to your customers it's possible to generate alerts that only trigger when user experience genuinely isn't meeting agreed expectations. Using the SLO-based alerts you can make sure engineers are being woken up in the night when there's an issue that requires urgent attention, but also catch slow-burning issues that might not be immediately obvious. 
+
+### How SLO-based alerting works
+
+The two most important elements for SLO-based alerting are the **error budget** and the **burn rate**.
+
+Let's take that same payment service from earlier. For this service we have assigned an SLO of 99% success rate over a 30 day period.
+
+ - An **error budget** represents the allowable amount of errors or service disruptions that a service can experience within a given period without violating its agreed-upon reliability target. It can be represented as $100\% - SLO$. For an SLO target of 99% the error budget is therefore 1%: meaning, that in our 30 day period 1 out of every 100 requests can fail without violating the SLO.
+
+- The **burn rate** is the rate at which the error budget is being consumed or “burned” by incidents or errors that occur in a system or service. A burn rate of 1 or lower indicates that the service is currently burning its error budget at a rate that is within SLO targets. A burn rate higher than 1 indicates that the service is burning its error budget too quickly, and would result in a failed SLO if not addressed.
+
+Alerting on the burn rate allows for a quick understanding of how impactful an incident is. An incident with a burn rate of 10 is causing a lot more impact than an incident with a burn rate of 2. Applying this logic allows alerting to be set up in such a way as to only alert when a meaningful amount of the error budget has been consumed. For example, a very brief spike may generate a high burn rate very briefly but overall consume a small amount of the error budget so can be ignored. Similarly a slight increase in the burn rate over a sustained period of time can actually consume a large portion of an error budget so should be looked at.
+
+## How to choose SLOs
+
+There isn't really a definitive way to say what should and shouldn't be an SLO, because this depends largely on the type of service that the SLOs are being created for. However a good rule of thumb is to focus on the areas of the service that have the most significant impact on customer satisfaction, experience, and the overall value delivered by your service. When looking at these areas consider factors such as availability, response time, throughput, error rate, or any other relevant performance indicators that can become the SLIs to base your SLOs on. These metrics should directly impact the overall quality of the service and align with the expectations and requirements of the consumers. 
+
+In order to have the most impact, SLOs should be agreed in advance with all stakeholders for a service. This should include engineering teams, product management and the users themselves if possible! Gaining this agreement amongst all parties involved means that these can be used as qualitative measurements in future conversations. Similarly it's extremely important that the SLOs are based in reality. If you're currently getting a success rate of 75%, setting an SLO at 99% is setting your future selves up for failure. Similarly, if you rely on an external service that has an SLO of 99%, you should factor this into your own SLO. If you want an SLO of 99% for your service and 1% of requests could fail due to your external dependency, you should strongly consider setting your SLO no higher than 98%, because 99% of 99% is 98%. 
+
+One final important point to mention is that SLOs are not a decide-once-and-forget deal. They can change as your service evolves. If you fail the objective for successive periods then it's possible you've set your objective too high. Similarly, if you meet your objective time after time then consider whether you can tighten up your objective and hold yourselves to a higher bar of quality. Again these are decisions that should be made by all concerned because failing the objective should have meaning. 
+
+## Implementing SLOs in your language and framework
+
+Autometrics brings a unique take by allowing you to define SLOs directly in your code in the same language that you're already using (read: no need for YAML!).
+
+Find out more about how to implement SLOs in your language and framework.
+
+### Framework guides
+
+<Cards num={2}>
+	<Card arrow title="Setting up SLOs in an Express (NodeJS) service" href="/typescript/setting-up-slos-in-express"/>
+	<Card arrow title="Setting up SLOs in a FastAPI service" href="/python/setting-up-slos-in-fastapi"/>
+</Cards>
+
+### Language guides
+
+<Cards num={4}>
+	<Card arrow title="Rust" href="/rust/adding-alerts-and-slos"/>
+	<Card arrow title="TypeScript" href="/typescript/adding-alerts-and-slos"/>
+	<Card arrow title="Python" href="/python/adding-alerts-and-slos"/>
+	<Card arrow title="Go" href="/go/adding-alerts-and-slos"/>
+</Cards>
