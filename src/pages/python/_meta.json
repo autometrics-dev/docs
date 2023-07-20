@@ -6,5 +6,6 @@
 		"title": "API Reference ↗",
 		"href": "https://pypi.org/project/autometrics/",
 		"newWindow": true
-	}
+	},
+	"setting-up-slos-in-fastapi": "Setting up SLOs with FastAPI"
 }

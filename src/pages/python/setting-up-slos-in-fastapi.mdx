@@ -1,0 +1,248 @@
+---
+title: Setting up SLOs with FastAPI
+date: 2023-07-19
+---
+
+import { Callout, Cards, Card } from "nextra-theme-docs";
+
+# Setting up SLOs in Express
+
+In this guide, we will explore Service Level Objectives (SLOs), their benefits when used for alerting, and provide a step-by-step walkthrough on implementing them in a FastAPI application.
+
+## Why SLOs
+
+How do you know your application is working correctly after you have deployed it? You will likely want to use some form of alerts to notify you if the service is down.
+
+SLOs empower engineers to establish user-centric alerts. These alerts, which focus on metrics like response and error rates, closely align with a user's experience. By design, SLO alerts often serve as an early warning, akin to detecting a "gas leak," allowing proactive measures before issues escalate.
+
+## How SLOs work
+
+SLO alerting works on two principal ideas: **error budgets** and **burn rates**.
+
+An **error budget** is a measure of the acceptable level of errors or service disruptions that a service can experience during a specified timeframe, without violating its agreed-upon reliability target. It can be represented as:
+
+So for an SLO of 99% the error budget is:
+
+$100\% - 99\% = 1\%$
+
+The **burn rate** represents the pace at which the error budget is being consumed or "burned" by errors within a system or service. A burn rate of 1 or less indicates that the service is currently burning its error budget at a rate that aligns with the SLO targets. Conversely, a burn rate exceeding 1 indicates that the service is burning its error budget too quickly, which would result in a failed SLO if not addressed.
+
+The burn rate makes up the basis of the SLO-based alert.
+
+One final note before we dive in: SLOs are a blend of science and art. While this guide provides a solid starting point, it's important to customize the values to align with your specific business requirements and processes.
+
+The best way to learn to use SLOs, like any engineering concept, is to go build with them.
+
+## Implementing SLOs in FastAPI (using Autometrics)
+
+Alright, now let's jump into the heart of this guide.
+
+<Callout type="info">
+
+#### Pre-requisites
+
+- **Autometrics library for Python**: Make sure you have the Autometrics library installed. See the [quickstart](/python/quickstart) for installation instructions.
+- **Prometheus**: Autometrics is designed to work with Prometheus, a powerful open-source monitoring and alerting database. To get started quickly, you can use the [Autometrics CLI](/local-development) or download the binary directly.
+
+</Callout>
+
+We will use SLO-based alerts to enhance a simple FastAPI API.
+
+This API sits in front of a user directory, and it accepts requests to create, update, and delete users.
+
+Our API code consists of a single file, `main.py`:
+
+```python filename="main.py"
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+
+@app.get("/users")
+async def get_all_users():
+    #...
+
+@app.get("/users/:id")
+async def get_user_by_id(id: int):
+    #...
+
+@app.post("/users")
+async def create_user():
+    #...
+
+@app.put("/users/:id")
+async def handleUpdateUser(id: int):
+    #...
+
+@app.delete("/users/:id")
+async def handleDeleteUser(id: int):
+    #...
+```
+
+### Adding Autometrics to the project
+
+Our first step is to generate the necessary metrics for our SLOs. We can do this by decorating our path operation functions with `autometrics`.
+
+```python filename="users.py" {1,5,10,15,20,25}
+from autometrics import autometrics
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+
+@app.get("/users")
+@autometrics
+async def get_all_users():
+    # ...
+
+@app.get("/users/:id")
+@autometrics
+async def get_user_by_id(id: int):
+    #
+
+@app.post("/users")
+@autometrics
+async def create_user():
+    #
+
+@app.put("/users/:id")
+@autometrics
+async def handleUpdateUser(id: int):
+    #
+
+@app.delete("/users/:id")
+@autometrics
+async def handleDeleteUser(id: int):
+    # 
+```
+
+You can use the same `@autometrics` interface to decorate other functions that are called inside your path operation functions. For example, you could also decorate functions that interact with a database or implement critical business logic.
+
+It's quite simple: The more you add, the more comprehensive and informative the metrics data will become, allowing you to build a clearer picture of your system's performance.
+
+For each function above, autometrics will generate metrics to answer core questions about availability, such as:
+
+- Rate: How many requests has this function received?
+- Error: How many of the requests errored?
+- Duration: How long do the requests take?
+
+These are the basic building blocks that we'll use for our Service Level Objectives.
+
+### Creating an SLO
+
+We can create our SLO in the same `main.py` file. The `@autometrics/autometrics` library includes helper utilities for SLOs: `Objective`, `ObjectiveLatency`, `ObjectivePercentile`.
+
+```python filename="main.py" {2}
+from autometrics import autometrics
+from autometrics.objectives import Objective, ObjectiveLatency, ObjectivePercentile
+from fastapi import FastAPI
+
+# ...
+```
+
+Using these utilities, we define our SLO which we can then pass to each of our `autometrics` decorated functions.
+
+Here's how that works:
+
+```python
+API_SLO = Objective(
+    "api",
+    success_rate=ObjectivePercentile.P99_9,
+    latency=(ObjectiveLatency.Ms250, ObjectivePercentile.P99),
+)
+```
+
+First, we create an `Objective` object that we call `API_SLO`. We give the objective a descriptive `name` and two parameters: `successRate` and `latency`.
+
+The `successRate` accepts a predefined precentile value (from the enum `ObjectivePercentile`). For example, `ObjectivePercentile.P99` would define a success rate of 99% for the objective.
+
+The `latency` accepts a tuple `[A, B]` which should include the latency goal in milliseconds and, similarly, a percentile. So: `[ObjectiveLatency.Ms250, ObjectivePercentile.P99]` translates to: "_We expect 99% of requests to be completed within 250 milliseconds_."
+
+### Adding SLOs to our functions
+
+For each function we want to group into our SLO, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter.
+
+For our user directory application, we will group all of our handlers into one objective. However, in real usage you can extend it to group any underlying important functions as well.
+
+```python filename="main.py" {14,19,24,29,34}
+from autometrics import autometrics
+from autometrics.objectives import Objective, ObjectiveLatency, ObjectivePercentile
+from fastapi import FastAPI
+
+app = FastAPI()
+
+API_SLO = Objective(
+    "api",
+    success_rate=ObjectivePercentile.P99_9,
+    latency=(ObjectiveLatency.Ms250, ObjectivePercentile.P99),
+)
+
+@app.get("/users")
+@autometrics(objective=API_SLO)
+async def get_all_users():
+    # ...
+
+@app.get("/users/:id")
+@autometrics(objective=API_SLO)
+async def get_user_by_id(id: int):
+    #
+
+@app.post("/users")
+@autometrics(objective=API_SLO)
+async def create_user():
+    #
+
+@app.put("/users/:id")
+@autometrics(objective=API_SLO)
+async def handleUpdateUser(id: int):
+    #
+
+@app.delete("/users/:id")
+@autometrics(objective=API_SLO)
+async def handleDeleteUser(id: int):
+    # 
+```
+
+### Viewing the SLOs
+
+That's all for the code-writing part!
+
+Autometrics will now emit metrics with special labels that Prometheus can group into. You can check out more how this works under the hood in [this blogpost](https://fiberplane.com/blog/an-adventure-with-slos-generic-prometheus-alerting-rules-and-complex-promql-queries).
+
+You can preview and validate the SLOs using the Autometrics CLI and Explorer. Navigate to the "SLO" tab in the top left to see an overview list of the SLOs you've just created (our example should have a single item named "api").
+
+![You can preview your SLOs in the Autometrics Explorer](/images/express_slo_preview.png)
+
+If you're using Grafana you can load one of the pre-made [Autometrics dashboards](https://grafana.com/grafana/dashboards/18506-autometrics-service-level-objectives-slos/). You don't need to configure the dashboard - it will automatically pick up all Autometrics-generated data from your Prometheus and show a helpful SLO overview panel with the current score on the left side and the functions that comprise that SLO on your right.
+
+### Configuring Alerts
+
+Finally, based on this you can set up alerts inside Prometheus.
+
+Grab the Autometrics alerting rule-set and append it to your Prometheus configuration.
+
+<Cards num={2}>
+  <Card
+    children
+    icon
+    title="Autometrics alerting rules"
+    arrow
+    href="https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml"
+  />
+</Cards>
+
+No need to configure anything else - the alerts will be dormant by default and activate _only_ when they find SLO labels on Autometrics-instrumented data.
+
+You can validate that the alerts are set by navigating to the "Alerts" tab in Prometheus UI.
+
+### Recap
+
+And we're set!
+
+We started off with a simple Express application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
+
+A few things to note:
+
+- as mentioned earlier, SLOs are an art as much as science: a week after deploying this you will probably need to tweak them to your needs. The good news is that the only thing you need to change is the `API_SLO` object we've created at the beginning.
