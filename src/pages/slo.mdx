@@ -14,9 +14,7 @@ What are they? Why are they so important? Let's take a closer look…
 
 Put simply, an SLO is an agreed objective, expressed as a percentage over a set period of time, relating to service quality or reliability for something deemed important for the service. What is deemed important? Depends on the service but it is almost always related to the **latency** or **error rate** of user interactions, because ultimately these are what are important to the service. 
 
-These measurements can help build **indicators** of the service performance.
-
-(Technically called *Service Level Indicators*, however, to reduce the amount of SL* terminology we'll just call them indicators here)
+These measurements can help build **indicators** of the service performance. (Technically called *Service Level Indicators*, however, to reduce the amount of SL* terminology we'll just call them indicators here)
 
 For example, in a payment service it would be important to measure how many payment requests are successful and how long payments take to make. The indicator for each could be as follows: 
 
@@ -58,9 +56,13 @@ Alerting on the burn rate allows for a quick understanding of how impactful an i
 
 ## How to choose SLOs
 
-There isn't really a definitive way to say what should and shouldn't be an SLO, because this depends largely on the type of service that the SLOs are being created for. However a good rule of thumb is to focus on the areas of the service that have the most significant impact on customer satisfaction, experience, and the overall value delivered by your service. When looking at these areas consider factors such as availability, response time, throughput, error rate, or any other relevant performance indicators that can become the SLIs to base your SLOs on. These metrics should directly impact the overall quality of the service and align with the expectations and requirements of the consumers. 
+There isn't really a definitive way to say what should and shouldn't be an SLO, because this depends largely on the type of service that the SLOs are being created for. 
 
-In order to have the most impact, SLOs should be agreed in advance with all stakeholders for a service. This should include engineering teams, product management and the users themselves if possible! Gaining this agreement amongst all parties involved means that these can be used as qualitative measurements in future conversations. Similarly it's extremely important that the SLOs are based in reality. If you're currently getting a success rate of 75%, setting an SLO at 99% is setting your future selves up for failure. Similarly, if you rely on an external service that has an SLO of 99%, you should factor this into your own SLO. If you want an SLO of 99% for your service and 1% of requests could fail due to your external dependency, you should strongly consider setting your SLO no higher than 98%, because 99% of 99% is 98%. 
+- **Start simple**. If your product is quite small still, e.g.: a monorepo with a frontend, backend (API + database): create a single SLO for your entire backend. This will give you a good starting point with "thinking in SLOs". 
+
+- **Align your entire product team around the SLOs**. SLOs will have the most impact if all stakeholders are involved in their creation: engineering teams, product managers, maybe even customers themselves! Gaining this agreement amongst all parties involved means that these can be used as qualitative measurements in future conversations. 
+
+- **Set realistic expectations**. If you're currently getting a success rate of 75%, setting an SLO at 99% is setting your future selves up for failure. Similarly, if you rely on an external service that has an SLO of 99%, you should factor this into your own SLO. If you want an SLO of 99% for your service and 1% of requests could fail due to your external dependency, you should strongly consider setting your SLO no higher than 98%, because 99% of 99% is 98%. 
 
 One final important point to mention is that SLOs are not a decide-once-and-forget deal. They can change as your service evolves. If you fail the objective for successive periods then it's possible you've set your objective too high. Similarly, if you meet your objective time after time then consider whether you can tighten up your objective and hold yourselves to a higher bar of quality. Again these are decisions that should be made by all concerned because failing the objective should have meaning. 
 
@@ -79,9 +81,9 @@ Find out more about how to implement SLOs in your language and framework.
 
 ### Language guides
 
-<Cards num={4}>
-	<Card arrow title="Rust" href="/rust/adding-alerts-and-slos"/>
-	<Card arrow title="TypeScript" href="/typescript/adding-alerts-and-slos"/>
-	<Card arrow title="Python" href="/python/adding-alerts-and-slos"/>
-	<Card arrow title="Go" href="/go/adding-alerts-and-slos"/>
+<Cards num={2}>
+	<Card arrow title="SLOs in Rust" href="/rust/adding-alerts-and-slos"/>
+	<Card arrow title="SLOs in TypeScript" href="/typescript/adding-alerts-and-slos"/>
+	<Card arrow title="SLOs in Python" href="/python/adding-alerts-and-slos"/>
+	<Card arrow title="SLOs in Go" href="/go/adding-alerts-and-slos"/>
 </Cards>
