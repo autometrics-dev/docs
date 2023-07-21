@@ -3,9 +3,9 @@ title: Setting up SLOs with FastAPI
 date: 2023-07-19
 ---
 
-import { Callout, Cards, Card } from "nextra-theme-docs";
+import { Callout, Cards, Card, FileTree, Steps } from "nextra-theme-docs";
 
-# Setting up SLOs in Express
+# Setting up SLOs in FastAPI
 
 In this guide, we will explore Service Level Objectives (SLOs), their benefits when used for alerting, and provide a step-by-step walkthrough on implementing them in a FastAPI application.
 
@@ -46,7 +46,7 @@ Alright, now let's jump into the heart of this guide.
 
 </Callout>
 
-We will use SLO-based alerts to enhance a simple FastAPI API.
+We will use SLO-based alerts to enhance a simple FastAPI service.
 
 This API sits in front of a user directory, and it accepts requests to create, update, and delete users.
 
@@ -78,11 +78,16 @@ async def handleDeleteUser(id: int):
     #...
 ```
 
+
+We'll ignore the function body (`#...`) of our path operation functions as for the purpose for this guide they're not that relevant - Autometrics requires no changes to your function implementation to add the necessary metrics.
+
+<Steps>
+
 ### Adding Autometrics to the project
 
 Our first step is to generate the necessary metrics for our SLOs. We can do this by decorating our path operation functions with `autometrics`. Notice how there's also a new path for publishing the metrics ready for Prometheus to scrape that's using `Response` from the FastAPI library and the `prometheus_client` library. 
 
-```python filename="users.py" {1,2,3,8,13,18,23,28}
+```python filename="main.py" {1,2,3,8,13,18,23,28}
 from autometrics import autometrics
 from prometheus_client import generate_latest
 from fastapi import FastAPI, Response
@@ -133,7 +138,7 @@ These are the basic building blocks that we'll use for our Service Level Objecti
 
 ### Creating an SLO
 
-We can create our SLO in the same `main.py` file. The `@autometrics/autometrics` library includes helper utilities for SLOs: `Objective`, `ObjectiveLatency`, `ObjectivePercentile`.
+We can create our SLO in the same `main.py` file. The `autometrics` library includes helper utilities for SLOs: `Objective`, `ObjectiveLatency`, `ObjectivePercentile`.
 
 ```python filename="main.py" {2}
 from autometrics import autometrics
@@ -160,7 +165,7 @@ First, we create an `Objective` object that we call `API_SLO`. We give the objec
 
 The `successRate` accepts a predefined precentile value (from the enum `ObjectivePercentile`). For example, `ObjectivePercentile.P99` would define a success rate of 99% for the objective.
 
-The `latency` accepts a tuple `[A, B]` which should include the latency goal in milliseconds and, similarly, a percentile. So: `[ObjectiveLatency.Ms250, ObjectivePercentile.P99]` translates to: "_We expect 99% of requests to be completed within 250 milliseconds_."
+The `latency` accepts a tuple `[A, B]` which should include the latency goal in milliseconds and, similarly, a percentile. So: `(ObjectiveLatency.Ms250, ObjectivePercentile.P99)` translates to: "_We expect 99% of requests to be completed within 250 milliseconds_."
 
 ### Adding SLOs to our functions
 
@@ -168,7 +173,7 @@ For each function we want to group into our SLOs, we simply pass in our newly cr
 
 For our user directory application, we will group all of our handlers into one objective. However, in real usage you can extend it to group any underlying important functions as well.
 
-```python filename="main.py" {16,21,26,31,36}
+```python filename="main.py" {8-12,16,21,26,31,36}
 from autometrics import autometrics
 from autometrics.objectives import Objective, ObjectiveLatency, ObjectivePercentile
 from prometheus_client import generate_latest
@@ -248,8 +253,7 @@ You can validate that the alerts are set by navigating to the "Alerts" tab in Pr
 
 And we're set!
 
-We started off with a simple Express application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
-
-A few things to note:
+We started off with a simple FastAPI application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
 
 - as mentioned earlier, SLOs are an art as much as science: a week after deploying this you will probably need to tweak them to your needs. The good news is that the only thing you need to change is the `API_SLO` object we've created at the beginning.
+</Steps>
