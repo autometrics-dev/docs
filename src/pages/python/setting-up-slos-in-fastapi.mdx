@@ -1,6 +1,5 @@
 ---
 title: Setting up SLOs with FastAPI
-date: 2023-07-19
 ---
 
 import { Callout, Cards, Card, FileTree, Steps } from "nextra-theme-docs";
@@ -87,7 +86,7 @@ We'll ignore the function body (`#...`) of our path operation functions as for t
 
 Our first step is to generate the necessary metrics for our SLOs. We can do this by decorating our path operation functions with `autometrics`. Notice how there's also a new path for publishing the metrics ready for Prometheus to scrape that's using `Response` from the FastAPI library and the `prometheus_client` library. 
 
-```python filename="main.py" {1,2,3,8,13,18,23,28}
+```python filename="main.py" {1,2,3,8,13,18,23,28, 32-34}
 from autometrics import autometrics
 from prometheus_client import generate_latest
 from fastapi import FastAPI, Response
@@ -102,22 +101,22 @@ async def get_all_users():
 @app.get("/users/{id}")
 @autometrics
 async def get_user_by_id(id: int):
-    #
+    # ...
 
 @app.post("/users")
 @autometrics
 async def create_user():
-    #
+    # ...
 
 @app.put("/users/{id}")
 @autometrics
 async def update_user(id: int):
-    #
+    # ...
 
 @app.delete("/users/{id}")
 @autometrics
 async def delete_user(id: int):
-    # 
+    # ...
 
 @app.get("/metrics")
 def metrics():
@@ -169,11 +168,11 @@ The `latency` accepts a tuple `[A, B]` which should include the latency goal in 
 
 ### Adding SLOs to our functions
 
-For each function we want to group into our SLOs, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter. Notice that the `/metrics` path isn't included here because as we don't want the SLO to include the metrics scraping activity. 
+For each function we want to group into our SLOs, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter. The `/metrics` path isn't included here because as we don't want the SLO to include the metrics scraping activity. 
 
 For our user directory application, we will group all of our handlers into one objective. However, in real usage you can extend it to group any underlying important functions as well.
 
-```python filename="main.py" {8-12,16,21,26,31,36}
+```python filename="main.py" {8-12,15,20,25,30,35}
 from autometrics import autometrics
 from autometrics.objectives import Objective, ObjectiveLatency, ObjectivePercentile
 from prometheus_client import generate_latest
@@ -221,7 +220,7 @@ def metrics():
 
 That's all for the code-writing part!
 
-Autometrics will now emit metrics with special labels that Prometheus can group into. You can check out more how this works under the hood in [this blogpost](https://fiberplane.com/blog/an-adventure-with-slos-generic-prometheus-alerting-rules-and-complex-promql-queries).
+Autometrics will now emit metrics with special labels that Prometheus can group into. You can check out more how this works under the hood in [this blog post](https://fiberplane.com/blog/an-adventure-with-slos-generic-prometheus-alerting-rules-and-complex-promql-queries).
 
 You can preview and validate the SLOs using the Autometrics CLI and Explorer. Navigate to the "SLO" tab in the top left to see an overview list of the SLOs you've just created (our example should have a single item named "api").
 
@@ -233,7 +232,7 @@ If you're using Grafana you can load one of the pre-made [Autometrics dashboards
 
 Finally, based on this you can set up alerts inside Prometheus.
 
-Grab the Autometrics alerting rule-set and append it to your Prometheus configuration.
+Grab the Autometrics alerting rule-set and append it to your Prometheus configuration. No need to configure anything else - the alerts will be dormant by default and activate _only_ when they find SLO labels on Autometrics-instrumented data.
 
 <Cards num={2}>
   <Card
@@ -245,9 +244,7 @@ Grab the Autometrics alerting rule-set and append it to your Prometheus configur
   />
 </Cards>
 
-No need to configure anything else - the alerts will be dormant by default and activate _only_ when they find SLO labels on Autometrics-instrumented data.
-
-You can validate that the alerts are set by navigating to the "Alerts" tab in Prometheus UI.
+You can validate that the alerts are set by navigating to the _Alerts_ tab in Prometheus UI.
 
 ### Recap
 

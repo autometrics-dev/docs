@@ -16,7 +16,7 @@ SLOs empower engineers to establish user-centric alerts. These alerts, which foc
 
 ## How SLOs work
 
-SLO alerting works work on two principal ideas: **error budgets** and **burn rates**.
+SLO alerting works on two principal ideas: **error budgets** and **burn rates**.
 
 An **error budget** is a measure of the acceptable level of errors or service disruptions that a service can experience during a specified timeframe, without violating its agreed-upon reliability target. It can be represented as:
 
@@ -253,7 +253,7 @@ app.delete(
 
 That's all for the code-writing part!
 
-Autometrics will now emit metrics with special labels that Prometheus can group into. You can check out more how this works under the hood in [this blogpost](https://fiberplane.com/blog/an-adventure-with-slos-generic-prometheus-alerting-rules-and-complex-promql-queries).
+Autometrics will now emit metrics with special labels that Prometheus can group into. You can check out more how this works under the hood in [this blog post](https://fiberplane.com/blog/an-adventure-with-slos-generic-prometheus-alerting-rules-and-complex-promql-queries).
 
 You can preview and validate the SLOs using the Autometrics CLI and Explorer. Navigate to the "SLO" tab in the top left to see an overview list of the SLOs you've just created (our example should have a single item named "api").
 
@@ -276,7 +276,6 @@ Grab the Autometrics alerting rule-set and append it to your Prometheus configur
     href="https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml"
   />
 </Cards>
-
 
 You can validate that the alerts are set by navigating to the "Alerts" tab in Prometheus UI.
 
