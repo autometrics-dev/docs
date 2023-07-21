@@ -16,7 +16,7 @@ SLOs empower engineers to establish user-centric alerts. These alerts, which foc
 
 ## How SLOs work
 
-SLOs work on two principal ideas: **error budgets** and **burn rates**.
+SLO alerting works work on two principal ideas: **error budgets** and **burn rates**.
 
 An **error budget** is a measure of the acceptable level of errors or service disruptions that a service can experience during a specified timeframe, without violating its agreed-upon reliability target. It can be represented as:
 
@@ -110,6 +110,8 @@ export function handleDeleteUser(req: Request, res: Response) {
 }
 ```
 
+We'll ignore the function body of our route handlers (`// ...`) as for the purpose for this guide they're not that relevant - Autometrics requires no changes to your function implementation to add the necessary metrics.
+
 <Steps>
 
 ### Adding Autometrics to the project
@@ -135,7 +137,7 @@ You can use the same `autometrics` interface to wrap other functions that are ca
 
 It's quite simple: The more you add, the more comprehensive and informative the metrics data will become, allowing you to build a clearer picture of your system's performance.
 
-For each handler above, autometrics will generate metrics to answer core questions about availability, such as:
+For each function above, autometrics will generate metrics to answer core questions about availability, such as:
 
 - Rate: How many requests has this function received?
 - Error: How many of the requests errored?
@@ -263,7 +265,7 @@ If you're using Grafana you can load one of the pre-made [Autometrics dashboards
 
 Finally, based on this you can set up alerts inside Prometheus.
 
-Grab the Autometrics alerting rule-set and append it to your Prometheus configuration.
+Grab the Autometrics alerting rule-set and append it to your Prometheus configuration. No need to configure anything else - the alerts will be dormant by default and activate _only_ when they find SLO labels on Autometrics-instrumented data.
 
 <Cards num={2}>
   <Card
@@ -275,7 +277,6 @@ Grab the Autometrics alerting rule-set and append it to your Prometheus configur
   />
 </Cards>
 
-No need to configure anything else - the alerts will be dormant by default and activate _only_ when they find SLO labels on Autometrics-instrumented data.
 
 You can validate that the alerts are set by navigating to the "Alerts" tab in Prometheus UI.
 
