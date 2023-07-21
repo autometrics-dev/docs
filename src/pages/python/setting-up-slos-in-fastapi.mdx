@@ -1,10 +1,11 @@
 ---
 title: Setting up SLOs with FastAPI
+date: 2023-07-19
 ---
 
-import { Callout, Cards, Card, FileTree, Steps } from "nextra-theme-docs";
+import { Callout, Cards, Card } from "nextra-theme-docs";
 
-# Setting up SLOs in FastAPI
+# Setting up SLOs in Express
 
 In this guide, we will explore Service Level Objectives (SLOs), their benefits when used for alerting, and provide a step-by-step walkthrough on implementing them in a FastAPI application.
 
@@ -45,7 +46,7 @@ Alright, now let's jump into the heart of this guide.
 
 </Callout>
 
-We will use SLO-based alerts to enhance a simple FastAPI service.
+We will use SLO-based alerts to enhance a simple FastAPI API.
 
 This API sits in front of a user directory, and it accepts requests to create, update, and delete users.
 
@@ -56,13 +57,11 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get("/")
-
 @app.get("/users")
 async def get_all_users():
     #...
 
-@app.get("/users/:id")
+@app.get("/users/{id}")
 async def get_user_by_id(id: int):
     #...
 
@@ -70,37 +69,32 @@ async def get_user_by_id(id: int):
 async def create_user():
     #...
 
-@app.put("/users/:id")
+@app.put("/users/{id}")
 async def handleUpdateUser(id: int):
     #...
 
-@app.delete("/users/:id")
+@app.delete("/users/{id}")
 async def handleDeleteUser(id: int):
     #...
 ```
 
-We'll ignore the function body (`#...`) of our route handlers as for the purpose for this guide they're not that relevant - Autometrics requires no changes to your function implementation to add the necessary metrics.
-
-<Steps>
-
 ### Adding Autometrics to the project
 
-Our first step is to generate the necessary metrics for our SLOs. We can do this by decorating our path operation functions with `autometrics`.
+Our first step is to generate the necessary metrics for our SLOs. We can do this by decorating our path operation functions with `autometrics`. Notice how there's also a new path for publishing the metrics ready for Prometheus to scrape that's using `Response` from the FastAPI library and the `prometheus_client` library. 
 
-```python filename="main.py" {1,9,14,19,24,29}
+```python filename="users.py" {1,2,3,8,13,18,23,28}
 from autometrics import autometrics
-from fastapi import FastAPI
+from prometheus_client import generate_latest
+from fastapi import FastAPI, Response
 
 app = FastAPI()
-
-@app.get("/")
 
 @app.get("/users")
 @autometrics
 async def get_all_users():
     # ...
 
-@app.get("/users/:id")
+@app.get("/users/{id}")
 @autometrics
 async def get_user_by_id(id: int):
     #
@@ -110,15 +104,19 @@ async def get_user_by_id(id: int):
 async def create_user():
     #
 
-@app.put("/users/:id")
+@app.put("/users/{id}")
 @autometrics
 async def handleUpdateUser(id: int):
     #
 
-@app.delete("/users/:id")
+@app.delete("/users/{id}")
 @autometrics
 async def handleDeleteUser(id: int):
     # 
+
+@app.get("/metrics")
+def metrics():
+    return Response(generate_latest())
 ```
 
 You can use the same `@autometrics` interface to decorate other functions that are called inside your path operation functions. For example, you could also decorate functions that interact with a database or implement critical business logic.
@@ -135,17 +133,18 @@ These are the basic building blocks that we'll use for our Service Level Objecti
 
 ### Creating an SLO
 
-We can create our SLO in the same `main.py` file. The `autometrics` library includes helper utilities for SLOs: `Objective`, `ObjectiveLatency`, `ObjectivePercentile`.
+We can create our SLO in the same `main.py` file. The `@autometrics/autometrics` library includes helper utilities for SLOs: `Objective`, `ObjectiveLatency`, `ObjectivePercentile`.
 
 ```python filename="main.py" {2}
 from autometrics import autometrics
 from autometrics.objectives import Objective, ObjectiveLatency, ObjectivePercentile
-from fastapi import FastAPI
+from prometheus_client import generate_latest
+from fastapi import FastAPI, Response
 
 # ...
 ```
 
-Using these utilities, we define our SLO which we can then pass to each of our `autometrics` decorated functions.
+Using these utilities, we define our SLOs which we can then pass to each of our `autometrics` decorated functions.
 
 Here's how that works:
 
@@ -157,22 +156,23 @@ API_SLO = Objective(
 )
 ```
 
-First, we create an `Objective` object that we call `API_SLO`. We give the objective a descriptive `name` and two parameters: `successRate` and `latency`.
+First, we create an `Objective` object that we call `API_SLO`. We give the objective a descriptive `name` and two parameters: `successRate` and `latency`. These will be used to create two SLOs - one for error rates and one for latency. 
 
 The `successRate` accepts a predefined precentile value (from the enum `ObjectivePercentile`). For example, `ObjectivePercentile.P99` would define a success rate of 99% for the objective.
 
-The `latency` accepts a tuple `(A, B)` which should include the latency goal in milliseconds and, similarly, a percentile. So: `(ObjectiveLatency.Ms250, ObjectivePercentile.P99)` translates to: "_We expect 99% of requests to be completed within 250 milliseconds_."
+The `latency` accepts a tuple `[A, B]` which should include the latency goal in milliseconds and, similarly, a percentile. So: `[ObjectiveLatency.Ms250, ObjectivePercentile.P99]` translates to: "_We expect 99% of requests to be completed within 250 milliseconds_."
 
 ### Adding SLOs to our functions
 
-For each function we want to group into our SLO, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter.
+For each function we want to group into our SLOs, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter. Notice that the `/metrics` path isn't included here because as we don't want the SLO to include the metrics scraping activity. 
 
 For our user directory application, we will group all of our handlers into one objective. However, in real usage you can extend it to group any underlying important functions as well.
 
-```python filename="main.py" {7-11,14,19,24,29,34}
+```python filename="main.py" {16,21,26,31,36}
 from autometrics import autometrics
 from autometrics.objectives import Objective, ObjectiveLatency, ObjectivePercentile
-from fastapi import FastAPI
+from prometheus_client import generate_latest
+from fastapi import FastAPI, Response
 
 app = FastAPI()
 
@@ -187,7 +187,7 @@ API_SLO = Objective(
 async def get_all_users():
     # ...
 
-@app.get("/users/:id")
+@app.get("/users/{id}")
 @autometrics(objective=API_SLO)
 async def get_user_by_id(id: int):
     #
@@ -197,15 +197,19 @@ async def get_user_by_id(id: int):
 async def create_user():
     #
 
-@app.put("/users/:id")
+@app.put("/users/{id}")
 @autometrics(objective=API_SLO)
 async def handleUpdateUser(id: int):
     #
 
-@app.delete("/users/:id")
+@app.delete("/users/{id}")
 @autometrics(objective=API_SLO)
 async def handleDeleteUser(id: int):
     # 
+
+@app.get("/metrics")
+def metrics():
+    return Response(generate_latest())
 ```
 
 ### Viewing the SLOs
@@ -216,7 +220,7 @@ Autometrics will now emit metrics with special labels that Prometheus can group 
 
 You can preview and validate the SLOs using the Autometrics CLI and Explorer. Navigate to the "SLO" tab in the top left to see an overview list of the SLOs you've just created (our example should have a single item named "api").
 
-![You can preview your SLOs in the Autometrics Explorer](/images/express_slo_preview.png)
+![You can preview your SLOs in the Autometrics Explorer](/images/fastapi_slo_preview.png)
 
 If you're using Grafana you can load one of the pre-made [Autometrics dashboards](https://grafana.com/grafana/dashboards/18506-autometrics-service-level-objectives-slos/). You don't need to configure the dashboard - it will automatically pick up all Autometrics-generated data from your Prometheus and show a helpful SLO overview panel with the current score on the left side and the functions that comprise that SLO on your right.
 
@@ -224,7 +228,7 @@ If you're using Grafana you can load one of the pre-made [Autometrics dashboards
 
 Finally, based on this you can set up alerts inside Prometheus.
 
-Grab the Autometrics alerting rule-set and append it to your Prometheus configuration. No need to configure anything else - the alerts will be dormant by default and activate _only_ when they find SLO labels on Autometrics-instrumented data.
+Grab the Autometrics alerting rule-set and append it to your Prometheus configuration.
 
 <Cards num={2}>
   <Card
@@ -236,6 +240,7 @@ Grab the Autometrics alerting rule-set and append it to your Prometheus configur
   />
 </Cards>
 
+No need to configure anything else - the alerts will be dormant by default and activate _only_ when they find SLO labels on Autometrics-instrumented data.
 
 You can validate that the alerts are set by navigating to the "Alerts" tab in Prometheus UI.
 
@@ -243,8 +248,8 @@ You can validate that the alerts are set by navigating to the "Alerts" tab in Pr
 
 And we're set!
 
-We started off with a simple FastAPI application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
+We started off with a simple Express application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
 
-As mentioned earlier, SLOs are an art as much as science: a week after deploying this you will probably need to tweak them to your needs. The good news is that the only thing you need to change is the `API_SLO` object we've created at the beginning.
+A few things to note:
 
-</Steps>
+- as mentioned earlier, SLOs are an art as much as science: a week after deploying this you will probably need to tweak them to your needs. The good news is that the only thing you need to change is the `API_SLO` object we've created at the beginning.

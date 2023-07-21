@@ -161,7 +161,7 @@ import express, { Request, Response } from "express";
 // ...
 ```
 
-Using these utilities, we define our SLO as a plain-old-javascript-object, which we can then pass to each of our `autometrics` wrapped handlers.
+Using these utilities, we define our SLOs as a plain-old-javascript-object, which we can then pass to each of our `autometrics` wrapped handlers.
 
 Here's how that works:
 
@@ -173,7 +173,7 @@ const API_SLO: Objective = {
 };
 ```
 
-First, we create an `Objective` object that we call `API_SLO`. We give the objective a descriptive `name` and two parameters: `successRate` and `latency`.
+First, we create an `Objective` object that we call `API_SLO`. We give the objective a descriptive `name` and two parameters: `successRate` and `latency`.  These will be used to create two SLOs - one for error rates and one for latency. 
 
 The `successRate` accepts a predefined precentile value (from the enum `ObjectivePercentile`). For example, `ObjectivePercentile.P99` would define a success rate of 99% for the objective.
 
@@ -181,7 +181,7 @@ The `latency` accepts a tuple `[A, B]` which should include the latency goal in 
 
 ### Adding SLOs to our functions
 
-For each function we want to group into our SLO, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter.
+For each function we want to group into our SLOs, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter.
 
 For our user directory application, we will group all of our handlers into one objective. However, in real usage you can extend it to group any underlying important functions as well.
 
