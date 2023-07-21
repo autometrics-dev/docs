@@ -2,10 +2,14 @@
   "quickstart": "Quickstart",
   "adding-version-information": "Adding version information",
   "adding-alerts-and-slos": "Adding alerts and SLOs",
-	"language_api": {
-		"title": "API Reference ↗",
-		"href": "https://pypi.org/project/autometrics/",
-		"newWindow": true
-	},
-	"setting-up-slos-in-fastapi": "Setting up SLOs with FastAPI"
+  "language_api": {
+    "title": "API Reference ↗",
+    "href": "https://pypi.org/project/autometrics/",
+    "newWindow": true
+  },
+  "frameworks": {
+    "type": "separator",
+    "title": "Frameworks"
+  },
+  "setting-up-slos-in-fastapi": "Setting up SLOs with FastAPI"
 }
