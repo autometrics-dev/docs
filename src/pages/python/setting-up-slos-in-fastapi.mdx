@@ -70,11 +70,11 @@ async def create_user():
     #...
 
 @app.put("/users/{id}")
-async def handleUpdateUser(id: int):
+async def update_user(id: int):
     #...
 
 @app.delete("/users/{id}")
-async def handleDeleteUser(id: int):
+async def delete_user(id: int):
     #...
 ```
 
@@ -111,12 +111,12 @@ async def create_user():
 
 @app.put("/users/{id}")
 @autometrics
-async def handleUpdateUser(id: int):
+async def update_user(id: int):
     #
 
 @app.delete("/users/{id}")
 @autometrics
-async def handleDeleteUser(id: int):
+async def delete_user(id: int):
     # 
 
 @app.get("/metrics")
@@ -204,12 +204,12 @@ async def create_user():
 
 @app.put("/users/{id}")
 @autometrics(objective=API_SLO)
-async def handleUpdateUser(id: int):
+async def update_user(id: int):
     #
 
 @app.delete("/users/{id}")
 @autometrics(objective=API_SLO)
-async def handleDeleteUser(id: int):
+async def delete_user(id: int):
     # 
 
 @app.get("/metrics")
