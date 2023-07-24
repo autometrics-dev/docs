@@ -1,12 +1,17 @@
 {
-  "quickstart": "Quickstart",
+	"quickstart": "Quickstart",
+	"reference": {
+		"title": "API Reference ↗",
+		"href": "https://github.com/autometrics-dev/autometrics-ts/tree/main/packages/lib/reference",
+		"newWindow": true
+	},
 	"using-wrappers-and-decorators": "Using wrappers and decorators",
-  "adding-version-information": "Adding version information",
+	"adding-version-information": "Adding version information",
 	"adding-alerts-and-slos": "Adding alerts and SLOs",
 	"configuration": "Configuration",
-  "reference": {
-    "title": "API Reference ↗",
-    "href": "https://github.com/autometrics-dev/autometrics-ts/tree/main/packages/lib/reference",
-    "newWindow": true
-  }
+	"frameworks": {
+		"type": "separator",
+		"title": "Frameworks"
+	},
+	"setting-up-slos-in-express": "Setting up SLOs in Express"
 }

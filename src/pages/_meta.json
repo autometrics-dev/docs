@@ -1,26 +1,35 @@
 {
-  "index": "Introduction",
-  "why-autometrics": "Why Autometrics?",
-  "features": "Features",
-  "local-development": "Local Development",
-  "ci-cd": "CI/CD",
-  "languages": {
-    "type": "separator",
-    "title": "Languages"
-  },
-  "rust": "Rust",
-  "typescript": "TypeScript",
-  "go": "Go",
-  "python": "Python",
-  "c-sharp": {
-    "title": "C# (community) ↗",
-    "newWindow": true,
-    "href": "https://github.com/P2P-Nathan/autometrics-cs"
-  },
-  "--": {
-    "type": "separator",
-    "title": ""
-  },
-  "configuring-prometheus": "Configuring Prometheus",
-  "get-involved": "Get Involved"
+	"index": "Introduction",
+	"why-autometrics": "Why Autometrics?",
+	"features": "Features",
+	"local-development": "Local Development",
+	"ci-cd": "CI/CD",
+	"slo": "Service Level Objectives",
+	"languages-frameworks": {
+		"type": "separator",
+		"title": "Languages & Frameworks"
+	},
+	"rust": {
+		"title": "Rust"
+	},
+	"typescript": {
+		"title": "TypeScript"
+	},
+	"go": {
+		"title": "Go"
+	},
+	"python": {
+		"title": "Python"
+	},
+	"c-sharp": {
+		"title": "C# (community) ↗",
+		"newWindow": true,
+		"href": "https://github.com/P2P-Nathan/autometrics-cs"
+	},
+	"other": {
+		"type": "separator",
+		"title": ""
+	},
+	"configuring-prometheus": "Configuring Prometheus",
+	"get-involved": "Get Involved"
 }
