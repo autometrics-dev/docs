@@ -27,7 +27,7 @@ jobs:
       - name: Create a branch and add the changed commit
         run: |
           git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git config user.email github-actions[bot]@users.noreply.github.com
           echo "branch_name=bot-cli-reference-$(date +'%Y-%m-%d')" >> "$GITHUB_ENV"
           git add src/pages/local-development/cli-reference.md
           git commit -m "Automated CLI reference update: $(date +'%Y-%m-%d')"
