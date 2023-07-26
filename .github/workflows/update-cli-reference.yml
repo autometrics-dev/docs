@@ -1,6 +1,8 @@
 on:
   workflow_dispatch
     
+name: Update CLI reference
+
 jobs:
   update-cli-reference:
     name: Update the CLI reference
