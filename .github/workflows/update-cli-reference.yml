@@ -31,7 +31,6 @@ jobs:
           echo "branch_name=bot-cli-reference-$(date +'%Y-%m-%d')" >> "$GITHUB_ENV"
           git add src/pages/local-development/cli-reference.md
           git commit -m "Automated CLI reference update: $(date +'%Y-%m-%d')"
-          git push
 
       - name: Create a PR with changes
         uses: peter-evans/create-pull-request@v5
