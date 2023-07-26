@@ -19,7 +19,7 @@ jobs:
       - name: Generate the CLI reference
         run: |
           /tmp/am markdown-help > src/pages/local-development/cli-reference.md
-          echo "am_version=am --version | awk '{print $2}'" >> "$GITHUB_ENV"
+          echo "am_version=$(/tmp/am --version | awk '{print $2}')" >> "$GITHUB_ENV"
 
       - name: Cleanup
         run: rm -r /tmp
