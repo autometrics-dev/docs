@@ -11,18 +11,13 @@ jobs:
 
       - name: Download and prepare the am binary
         run: |
-          mkdir /tmp
-          cd /tmp/
-          curl -L https://github.com/autometrics-dev/am/releases/latest/download/am-linux-x86_64 -o am
-          chmod u+x am
+          curl -L https://github.com/autometrics-dev/am/releases/latest/download/am-linux-x86_64 -o $RUNNER_TEMP/am
+          chmod u+x $RUNNER_TEMP/am
 
       - name: Generate the CLI reference
         run: |
-          /tmp/am markdown-help > src/pages/local-development/cli-reference.md
-          echo "am_version=$(/tmp/am --version | awk '{print $2}')" >> "$GITHUB_ENV"
-
-      - name: Cleanup
-        run: rm -r /tmp
+          $RUNNER_TEMP/am markdown-help > src/pages/local-development/cli-reference.md
+          echo "am_version=$($RUNNER_TEMP/am --version | awk '{print $2}')" >> "$GITHUB_ENV"
 
       - name: Create a branch and add the changed commit
         run: |
