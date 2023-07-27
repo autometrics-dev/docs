@@ -7,6 +7,9 @@ jobs:
   update-cli-reference:
     name: Update the CLI reference
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
     steps:
       - name: checkout
         uses: actions/checkout@v3
