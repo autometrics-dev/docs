@@ -1,67 +1,111 @@
-# Command-Line Help for `am`
+# Command-Line Help for `autometrics-am`
 
-This document contains the help content for the `am` command-line program.
+This document contains the help content for the `autometrics-am` command-line program.
 
-## `am`
+**Command Overview:**
 
-**Usage:** `am [COMMAND]`
+* [`autometrics-am`↴](#autometrics-am)
+* [`autometrics-am start`↴](#autometrics-am-start)
+* [`autometrics-am system`↴](#autometrics-am-system)
+* [`autometrics-am system prune`↴](#autometrics-am-system-prune)
+* [`autometrics-am explore`↴](#autometrics-am-explore)
+* [`autometrics-am discord`↴](#autometrics-am-discord)
 
-###### Subcommands:
+## `autometrics-am`
 
-* `start` — Start scraping the specified endpoint, while also providing a web interface to inspect the autometrics data
-* `system` — Manage am related system settings
+**Usage:** `autometrics-am [OPTIONS] <COMMAND>`
+
+###### **Subcommands:**
+
+* `start` — Start scraping the specified endpoint(s), while also providing a web interface to inspect the autometrics data
+* `system` — Manage am related system settings. Such as cleaning up downloaded Prometheus, Pushgateway installs
+* `explore` — Open up the existing Explorer
+* `discord` — Open the Fiberplane discord to receive help, send suggestions or discuss various things related to Autometrics and the `am` CLI
 
 ###### **Options:**
 
-* `--markdown-help`
+* `-v`, `--verbose` — Enable verbose logging. By enabling this you are also able to use RUST_LOG environment variable to change the log levels of other modules
+* `--config-file <CONFIG_FILE>` — Use the following file to define defaults for am
 
 
 
-## `am start`
+## `autometrics-am start`
 
-Start scraping the specified endpoint, while also providing a web interface to inspect the autometrics data
+Start scraping the specified endpoint(s), while also providing a web interface to inspect the autometrics data
 
-**Usage:** `am start [OPTIONS] [METRICS_ENDPOINTS]...`
+**Usage:** `autometrics-am start [OPTIONS] [METRICS_ENDPOINTS]...`
 
-###### Arguments:
+###### **Arguments:**
 
-* `<METRICS_ENDPOINTS>` — The endpoint(s) that Prometheus will scrape
+* `<METRICS_ENDPOINTS>` — The endpoint(s) that Prometheus will scrape.
 
-###### Options:
+###### **Options:**
 
-* `--prometheus-version <PROMETHEUS_VERSION>` — The Prometheus version to use
+* `--prometheus-version <PROMETHEUS_VERSION>` — The Prometheus version to use. It will be downloaded if am has not downloaded it already
 
-  Default value: `v2.44.0`
+  Default value: `v2.45.0`
+* `--scrape-interval <SCRAPE_INTERVAL>` — The default scrape interval for all Prometheus jobs
 * `-l`, `--listen-address <LISTEN_ADDRESS>` — The listen address for the web server of am
 
   Default value: `127.0.0.1:6789`
-* `-e`, `--enable-gateway` — Startup the gateway as well
+* `-p`, `--pushgateway-enabled <PUSHGATEWAY_ENABLED>` — Enable pushgateway
+
+  Possible values: `true`, `false`
+
+* `--pushgateway-version <PUSHGATEWAY_VERSION>` — The pushgateway version to use
+
+  Default value: `v1.6.0`
+* `-d`, `--ephemeral` — Whenever to clean up files created by Prometheus/Pushgateway after successful execution
+* `--no-rules` — Whenever to *NOT* load the autometrics rules file into Prometheus
 
 
 
-## `am system`
+## `autometrics-am system`
 
-Manage am related system settings
+Manage am related system settings. Such as cleaning up downloaded Prometheus, Pushgateway installs
 
-**Usage:** `am system <COMMAND>`
+**Usage:** `autometrics-am system <COMMAND>`
 
-###### Subcommands:
+###### **Subcommands:**
 
 * `prune` — Delete all locally downloaded binaries
 
 
 
-## `am system prune`
+## `autometrics-am system prune`
 
 Delete all locally downloaded binaries
 
-**Usage:** `am system prune [OPTIONS]`
+**Usage:** `autometrics-am system prune [OPTIONS]`
 
-###### Options:
+###### **Options:**
 
 * `-f`, `--force` — Force the cleanup without asking for confirmation
 
   Default value: `false`
+
+
+
+## `autometrics-am explore`
+
+Open up the existing Explorer
+
+**Usage:** `autometrics-am explore [OPTIONS]`
+
+###### **Options:**
+
+* `--prometheus-endpoint <PROMETHEUS_ENDPOINT>` — The Prometheus endpoint that will be passed to Explorer
+* `--explorer-endpoint <EXPLORER_ENDPOINT>` — Which endpoint to open in the browser
+
+  Default value: `http://localhost:6789/explorer`
+
+
+
+## `autometrics-am discord`
+
+Open the Fiberplane discord to receive help, send suggestions or discuss various things related to Autometrics and the `am` CLI
+
+**Usage:** `autometrics-am discord`
 
 
 
