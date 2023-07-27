@@ -1,0 +1,435 @@
+---
+title: Setting up SLOs with Axum
+---
+
+import { Callout, Cards, Card, FileTree, Steps } from "nextra-theme-docs";
+import HowSlosWorkSnippet from "@/snippets/how-slos-work.mdx"
+
+# Setting up SLOs in Axum
+In this guide, we will explore Service Level Objectives (SLOs), their benefits when used for alerting, and provide a step-by-step walkthrough on implementing them in {props.framework}.
+
+## Why SLOs
+
+How do you know your application is working correctly after you have deployed it? You will likely want to use some form of alerts to notify you if the service is down.
+
+SLOs empower engineers to establish user-centric alerts. These alerts, which focus on metrics like response and error rates, closely align with a user's experience. By design, SLO alerts often serve as an early warning, akin to detecting a "gas leak," allowing proactive measures before issues escalate.
+
+## How SLOs work
+
+<HowSlosWorkSnippet />
+
+## Implementing SLOs in Axum (using Autometrics)
+
+Alright, now let's jump into the heart of this guide.
+
+<Callout type="info">
+
+#### Pre-requisites
+
+- **Autometrics for Rust**: Make sure you have the Autometrics crate installed. See the [quickstart](/rust/quickstart) for installation instructions.
+- **Prometheus**: Autometrics is designed to work with Prometheus, a powerful open-source monitoring and alerting database. To get started quickly, you can use the [Autometrics CLI](/local-development) or download the binary directly.
+
+</Callout>
+
+We will use SLO-based alerts to enhance a simple Axum API. This API sits in front of a user directory, and it accepts requests to create, update, and delete users.
+
+For demonstration purposes, our API code is simply one file:
+
+<FileTree>
+    <FileTree.Folder name="src" defaultOpen>
+        <FileTree.File name="main.rs" />
+    </FileTree.Folder>
+    <FileTree.File name="Cargo.toml" />
+    <FileTree.File name="Cargo.lock" />
+</FileTree>
+
+```rust filename="main.rs"
+use axum::extract::Path;
+use axum::routing::{delete, post, put};
+use axum::Json;
+use axum::{http::StatusCode, response::IntoResponse, routing::get, Router};
+use serde::{Deserialize, Serialize};
+use std::net::SocketAddr;
+
+#[derive(Serialize, Deserialize, Debug)]
+struct User {
+    name: String,
+    email: String,
+}
+
+#[tokio::main]
+async fn main() {
+    let app = Router::new()
+        .route("/users", get(get_all_users))
+        .route("/users/:id", get(get_user_by_id))
+        .route("/users", post(create_user))
+        .route("/users/:id", put(update_user))
+        .route("/users/:id", delete(delete_user))
+
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+
+async fn get_all_users() -> impl IntoResponse {
+    // fetch all the users
+    // for now we just return an empty array
+    vec![]
+}
+
+async fn get_user_by_id(Path(_id): Path<i64>) -> impl IntoResponse {
+    // Find user by id and return object
+    // For now we just create a User object and return it as JSON
+    let user = User {
+        name: "foo".to_string(),
+        email: "foo@bar.xyz".to_string(),
+    };
+
+    (StatusCode::OK, Json(user))
+}
+
+async fn create_user(Json(user): Json<User>) -> impl IntoResponse {
+    let user = User {
+        name: user.name,
+        email: user.email,
+    };
+    // do something with User object
+
+    (StatusCode::CREATED, Json(user))
+}
+
+async fn update_user(Path(_id): Path<i64>) -> impl IntoResponse {
+    // update user based on id
+    StatusCode::OK
+}
+
+async fn delete_user(Path(_id): Path<i64>) -> impl IntoResponse {
+    // delete user based on id
+    StatusCode::OK
+}
+```
+
+As you can see we mostly ignore the function body of our route handlers as for the purpose for this guide they're not that relevant - Autometrics requires no changes to your function implementation to add the necessary metrics.
+
+<Steps>
+
+### Adding Autometrics to the project
+
+Our first step is to generate the necessary metrics for our SLOs. We can do this by decorating our route handlers with the `autometrics` macro.
+
+We import `autometrics` along with a `prometheus_exporter` it into our code:
+
+```rust filename="main.rs" {1}
+use autometrics::{autometrics, prometheus_exporter};
+use axum::extract::Path;
+use axum::routing::{delete, post, put};
+use axum::Json;
+use axum::{http::StatusCode, response::IntoResponse, routing::get, Router};
+use serde::{Deserialize, Serialize};
+use std::net::SocketAddr;
+```
+
+We decorate the handlers with the `autometrics` macro:
+
+```rust filename="main.rs" {1}
+#[autometrics]
+async fn get_all_users() -> impl IntoResponse {
+    // fetch all the users
+    // for now we just return an empty array
+    vec![]
+}
+```
+
+We add a new `/metrics` endpoint that will export our metrics:
+
+```rust filename="main.rs" {9-12}
+#[tokio::main]
+async fn main() {
+    let app = Router::new()
+        .route("/users", get(get_all_users))
+        .route("/users/:id", get(get_user_by_id))
+        .route("/users", post(create_user))
+        .route("/users/:id", put(update_user))
+        .route("/users/:id", delete(delete_user))
+        .route(
+            "/metrics",
+            get(|| async { prometheus_exporter::encode_http_response() }),
+        );
+
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+```
+
+Our `main.rs` should now look like this:
+
+```rust filename="main.rs" {1,36,43,55,66,72}
+use autometrics::{autometrics, prometheus_exporter};
+use axum::extract::Path;
+use axum::routing::{delete, post, put};
+use axum::Json;
+use axum::{http::StatusCode, response::IntoResponse, routing::get, Router};
+use serde::{Deserialize, Serialize};
+use std::net::SocketAddr;
+
+#[derive(Serialize, Deserialize, Debug)]
+struct User {
+    name: String,
+    email: String,
+}
+
+#[tokio::main]
+async fn main() {
+    let app = Router::new()
+        .route("/users", get(get_all_users))
+        .route("/users/:id", get(get_user_by_id))
+        .route("/users", post(create_user))
+        .route("/users/:id", put(update_user))
+        .route("/users/:id", delete(delete_user))
+        .route(
+            "/metrics",
+            get(|| async { prometheus_exporter::encode_http_response() }),
+        );
+
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+
+#[autometrics]
+async fn get_all_users() -> impl IntoResponse {
+    // fetch all the users
+    // for now we just return an empty array
+    vec![]
+}
+
+#[autometrics]
+async fn get_user_by_id(Path(_id): Path<i64>) -> impl IntoResponse {
+    // Find user by id and return object
+    // For now we just create a User object and return it as JSON
+    let user = User {
+        name: "foo".to_string(),
+        email: "foo@bar.xyz".to_string(),
+    };
+
+    (StatusCode::OK, Json(user))
+}
+
+#[autometrics]
+async fn create_user(Json(user): Json<User>) -> impl IntoResponse {
+    let user = User {
+        name: user.name,
+        email: user.email,
+    };
+    // do something with User object
+
+    (StatusCode::CREATED, Json(user))
+}
+
+#[autometrics]
+async fn update_user(Path(_id): Path<i64>) -> impl IntoResponse {
+    // update user based on id
+    StatusCode::OK
+}
+
+#[autometrics]
+async fn delete_user(Path(_id): Path<i64>) -> impl IntoResponse {
+    // delete user based on id
+    StatusCode::OK
+}
+```
+
+You can use the same `autometrics` macro to wrap other functions that are called inside your handlers. For example, you could also wrap functions that interact with the database or implement critical business logic.
+
+It's quite simple: The more you add, the more comprehensive and informative the metrics data will become, allowing you to build a clearer picture of your system's performance.
+
+For each function above, autometrics will generate metrics to answer core questions about availability, such as:
+
+- Rate: How many requests has this function received?
+- Error: How many of the requests errored?
+- Duration: How long do the requests take?
+
+These are the basic building blocks that we'll use for our Service Level Objectives.
+
+### Creating an SLO
+
+We can create our SLO in the same `main.rs` file. The `autometrics` crate includes helper utilities for SLOs: `Objective`, `ObjectiveLatency`, `ObjectivePercentile`.
+
+```rust filename="main.rs" {1}
+use autometrics::objectives::{Objective, ObjectiveLatency, ObjectivePercentile};
+use autometrics::{autometrics, prometheus_exporter};
+use axum::extract::Path;
+use axum::routing::{delete, post, put};
+use axum::Json;
+use axum::{http::StatusCode, response::IntoResponse, routing::get, Router};
+use serde::{Deserialize, Serialize};
+use std::net::SocketAddr;
+//...
+```
+
+Using these utilities, we define our SLOs as a simple struct, which we can then pass to each of our `autometrics` macro decorated handlers.
+
+Here's how that works:
+
+```rust filename="main.rs"
+const API_SLO: Objective = Objective::new("api")
+    .success_rate(ObjectivePercentile::P99)
+    .latency(ObjectiveLatency::Ms250, ObjectivePercentile::P99_9);
+```
+
+First, we create an `Objective` struct that we call `API_SLO`. We give the objective a descriptive name and call two methods on it: `success_rate` and `latency`.  These will be used to create two SLOs - one for error rates and one for latency. 
+
+The `success_rate` accepts a predefined precentile value (from the enum `ObjectivePercentile`). For example, `ObjectivePercentile::P99` would define a success rate of 99% for the objective.
+
+The `latency` method requires two values: the latency goal in milliseconds and, similarly, a percentile - both set in pre-defined enums. So: `ObjectiveLatency::Ms250, ObjectivePercentile::P99_9` translates to: "_We expect 99.9% of requests to be completed within 250 milliseconds_."
+
+### Adding SLOs to our functions
+For each function we want to group into our SLOs, we simply pass in our newly created `API_SLO` as the `objective` property in the options parameter in the macro. Here's an example using our previously defined `get_all_users` handler:
+
+```rust
+#[autometrics(objective = API_SLO)]
+async fn get_all_users() -> impl IntoResponse {
+    // fetch all the users
+    // for now we just return an empty array
+    vec![]
+}
+```
+
+For our user directory application, we will group all of our handlers into one objective. However, in real usage you can extend it to group any underlying important functions as well.
+
+Our `main.rs` should now look like this:
+
+```rust filename="main.rs
+use autometrics::objectives::{Objective, ObjectiveLatency, ObjectivePercentile};
+use autometrics::{autometrics, prometheus_exporter};
+use axum::extract::Path;
+use axum::routing::{delete, post, put};
+use axum::Json;
+use axum::{http::StatusCode, response::IntoResponse, routing::get, Router};
+use serde::{Deserialize, Serialize};
+use std::net::SocketAddr;
+
+#[derive(Serialize, Deserialize, Debug)]
+struct User {
+    name: String,
+    email: String,
+}
+
+const API_SLO: Objective = Objective::new("api")
+    .success_rate(ObjectivePercentile::P99)
+    .latency(ObjectiveLatency::Ms250, ObjectivePercentile::P99_9);
+
+#[tokio::main]
+async fn main() {
+    let app = Router::new()
+        .route("/users", get(get_all_users))
+        .route("/users/:id", get(get_user_by_id))
+        .route("/users", post(create_user))
+        .route("/users/:id", put(update_user))
+        .route("/users/:id", delete(delete_user))
+        .route(
+            "/metrics",
+            get(|| async { prometheus_exporter::encode_http_response() }),
+        );
+
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+
+#[autometrics(objective = API_SLO)]
+async fn get_all_users() -> impl IntoResponse {
+    // fetch all the users
+    // for now we just return an empty array
+    vec![]
+}
+
+#[autometrics(objective = API_SLO)]
+async fn get_user_by_id(Path(_id): Path<i64>) -> impl IntoResponse {
+    // Find user by id and return object
+    // For now we just create a User object and return it as JSON
+    let user = User {
+        name: "foo".to_string(),
+        email: "foo@bar.xyz".to_string(),
+    };
+
+    (StatusCode::OK, Json(user))
+}
+
+#[autometrics(objective = API_SLO)]
+async fn create_user(Json(user): Json<User>) -> impl IntoResponse {
+    let user = User {
+        name: user.name,
+        email: user.email,
+    };
+    // do something with User object
+
+    (StatusCode::CREATED, Json(user))
+}
+
+#[autometrics(objective = API_SLO)]
+async fn update_user(Path(_id): Path<i64>) -> impl IntoResponse {
+    // update user based on id
+    StatusCode::OK
+}
+
+#[autometrics(objective = API_SLO)]
+async fn delete_user(Path(_id): Path<i64>) -> impl IntoResponse {
+    // delete user based on id
+    StatusCode::OK
+}
+```
+
+### Viewing the SLOs
+
+That's all for the code-writing part!
+
+Autometrics will now emit metrics with special labels that Prometheus can group into. You can check out more how this works under the hood in [this blog post](https://fiberplane.com/blog/an-adventure-with-slos-generic-prometheus-alerting-rules-and-complex-promql-queries).
+
+You can preview and validate the SLOs using the Autometrics CLI and Explorer. Navigate to the "SLO" tab in the top left to see an overview list of the SLOs you've just created (our example should have a single item named "api").
+
+![You can preview your SLOs in the Autometrics Explorer](/images/axum_slo_preview.png)
+
+If you're using Grafana you can load one of the pre-made [Autometrics dashboards](https://grafana.com/grafana/dashboards/18506-autometrics-service-level-objectives-slos/). You don't need to configure the dashboard - it will automatically pick up all Autometrics-generated data from your Prometheus and show a helpful SLO overview panel with the current score on the left side and the functions that comprise that SLO on your right.
+
+### Configuring Alerts
+
+Finally, based on this you can set up alerts inside Prometheus.
+
+Grab the Autometrics alerting rule-set and append it to your Prometheus configuration. No need to configure anything else - the alerts will be dormant by default and activate _only_ when they find SLO labels on Autometrics-instrumented data.
+
+<Cards num={2}>
+  <Card
+    children
+    icon
+    title="Autometrics alerting rules"
+    arrow
+    href="https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml"
+  />
+</Cards>
+
+You can validate that the alerts are set by navigating to the "Alerts" tab in Prometheus UI.
+
+### Recap
+
+And we're set!
+
+We started off with a simple Express application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
+
+As mentioned earlier, SLOs are an art as much as science: a week after deploying this you will probably need to tweak them to your needs. The good news is that the only thing you need to change is the `API_SLO` object we've created at the beginning.
+
+</Steps>
+
