@@ -427,7 +427,7 @@ You can validate that the alerts are set by navigating to the "Alerts" tab in Pr
 
 And we're set!
 
-We started off with a simple Express application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
+We started off with a simple Axum application and in a few steps instrumented our service to report the basic metrics required to assess its health: rate, errors, and duration. On top of that we've grouped them into a Service Level Objective (SLO) to help us give a more structured insight into a question: is our service running smoothly for the users. This enabled us to add smarter alerts based on that data.
 
 As mentioned earlier, SLOs are an art as much as science: a week after deploying this you will probably need to tweak them to your needs. The good news is that the only thing you need to change is the `API_SLO` object we've created at the beginning.
 
