@@ -13,5 +13,6 @@
 		"type": "separator",
 		"title": "Frameworks"
 	},
-	"setting-up-slos-in-express": "Setting up SLOs in Express"
+	"setting-up-slos-in-express": "Setting up SLOs in Express",
+	"setting-up-slos-in-fastify": "Setting up SLOs in Fastify"
 }
