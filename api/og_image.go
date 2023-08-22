@@ -26,10 +26,10 @@ func loadTemplate() image.Image {
 
 func Handler(writer http.ResponseWriter, req *http.Request) {
 
+	setRoot() //HACK: 🤮
+
 	const W = 1200
 	const H = 630
-
-	setRoot()
 
 	template := loadTemplate()
 
@@ -43,8 +43,9 @@ func Handler(writer http.ResponseWriter, req *http.Request) {
 		panic(fontErr)
 	}
 
-	//dc.DrawStringWrapped("Hello, world!", 0, 90, 0, 0, (W - 20), 1.5, gg.AlignLeft)
-	dc.DrawStringAnchored("Hello, world!", (W / 2), (H / 2), 0.5, 0.5)
+	//dc.DrawStringAnchored
+
+	dc.DrawStringWrapped("This better be the longest heading in the world", W/2, (H/3)*2, 0.5, 0.5, W, 1.5, gg.AlignCenter)
 
 	buff := new(bytes.Buffer)
 	err := jpeg.Encode(buff, dc.Image(), nil)
