@@ -5,6 +5,16 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"@autometrics/autometrics@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@autometrics/autometrics@npm:0.6.0"
+  peerDependencies:
+    "@opentelemetry/exporter-prometheus": ">=0.35.1"
+    "@opentelemetry/sdk-metrics": ">=1.9.0"
+  checksum: 79141cfd0997535fa5d9417e08f7f5ddc1afe5406e9f0fd218f8c2216e7cd9ed54713906d3250a8cc9af20dc0d0f54f395dca4b6b7a98298ea1639a66d016df1
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:7.12.1":
   version: 7.12.1
   resolution: "@babel/runtime@npm:7.12.1"
@@ -454,6 +464,69 @@ __metadata:
   dependencies:
     semver: ^7.3.5
   checksum: a50a6818de5fc557d0b0e6f50ec780a7a02ab8ad07e5ac8b16bf519e0ad60a144ac64f97d05c443c3367235d337182e1d012bbac0eb8dbae8dc7b40b193efd0e
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/api@npm:>=1.4.1":
+  version: 1.4.1
+  resolution: "@opentelemetry/api@npm:1.4.1"
+  checksum: e783c40d1a518abf9c4c5d65223237c1392cd9a6c53ac6e2c3ef0c05ff7266e3dfc4fd9874316dae0dcb7a97950878deb513bcbadfaad653d48f0215f2a0911b
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/core@npm:1.15.2":
+  version: 1.15.2
+  resolution: "@opentelemetry/core@npm:1.15.2"
+  dependencies:
+    "@opentelemetry/semantic-conventions": 1.15.2
+  peerDependencies:
+    "@opentelemetry/api": ">=1.0.0 <1.5.0"
+  checksum: 0040d1952b13d1cf5c7f428f9b061806023e2d08acd716e9aa72caa0c4bca99059ac4ddfbecebc4f3b993c576b834d4bcf0914586d0020719a1b1c428461a16a
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/exporter-prometheus@npm:>=0.35.1":
+  version: 0.41.2
+  resolution: "@opentelemetry/exporter-prometheus@npm:0.41.2"
+  dependencies:
+    "@opentelemetry/core": 1.15.2
+    "@opentelemetry/resources": 1.15.2
+    "@opentelemetry/sdk-metrics": 1.15.2
+  peerDependencies:
+    "@opentelemetry/api": ^1.3.0
+  checksum: c3e2368778eb111d54dd2074fde4dd514620c73383a50b4973bfd1539fb53d19c8490e11ed2654fe463fb80d727af8061ab5191f1ebd315725bb20775ed9978f
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/resources@npm:1.15.2":
+  version: 1.15.2
+  resolution: "@opentelemetry/resources@npm:1.15.2"
+  dependencies:
+    "@opentelemetry/core": 1.15.2
+    "@opentelemetry/semantic-conventions": 1.15.2
+  peerDependencies:
+    "@opentelemetry/api": ">=1.0.0 <1.5.0"
+  checksum: 072d64bee2a073ac3f1218ba9d24bd0a20fc69988d206688c2f53e813c9d84ae325093c3c0e8909c2208cfa583fe5bad71d16af7d6b087a348d866c1d0857396
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/sdk-metrics@npm:1.15.2, @opentelemetry/sdk-metrics@npm:>=1.9.0":
+  version: 1.15.2
+  resolution: "@opentelemetry/sdk-metrics@npm:1.15.2"
+  dependencies:
+    "@opentelemetry/core": 1.15.2
+    "@opentelemetry/resources": 1.15.2
+    lodash.merge: ^4.6.2
+  peerDependencies:
+    "@opentelemetry/api": ">=1.3.0 <1.5.0"
+  checksum: 15eb40b977618ea24a7ce5bea264ab4c8a428d91c2ef0d824c9c98bea9fe3e136c92d03e5538ce86438e123f59977516112a657c4fc572e71ac544d483348b17
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/semantic-conventions@npm:1.15.2":
+  version: 1.15.2
+  resolution: "@opentelemetry/semantic-conventions@npm:1.15.2"
+  checksum: 6de4f8ffa277af18351dff19b821f04438bd4f3917f84816f0bf1577a810424d11ba5f15dca9739a17812a996eeb251048fc7d61b0eef9dc39beb9d4304f57e2
   languageName: node
   linkType: hard
 
@@ -1197,6 +1270,7 @@ __metadata:
     "@segment/snippet": ^4.16.0
     "@types/node": 18.11.10
     "@types/react": 18.2.0
+    autometrics: next
     date-fns: ^2.30.0
     katex: ^0.16.8
     next: ^13.0.6
@@ -1212,6 +1286,18 @@ __metadata:
     vfile-message: ^3.1.4
   languageName: unknown
   linkType: soft
+
+"autometrics@npm:next":
+  version: 0.7.0-beta2
+  resolution: "autometrics@npm:0.7.0-beta2"
+  dependencies:
+    "@autometrics/autometrics": ^0.6.0
+    "@opentelemetry/api": ">=1.4.1"
+    "@opentelemetry/exporter-prometheus": ">=0.35.1"
+    "@opentelemetry/sdk-metrics": ">=1.9.0"
+  checksum: 1ab9b9828f01340c4b12ff0cb08ae6f68cd70d7d95cc5f2c1ecdb07c5136bacda733d8749417557e65c7a99f0f49cbd24f0b5a652e2c5a847e3bd6e7ae2e6d68
+  languageName: node
+  linkType: hard
 
 "b4a@npm:^1.6.4":
   version: 1.6.4
@@ -3383,6 +3469,13 @@ __metadata:
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
   checksum: e403047ddb03181c9d0e92df9556570e2b67e0f0a930fcbbbd779370972368f5568e914f913e93f3b08f6d492abc71e14d4e9b7a18916c31fa04bd2306efe545
+  languageName: node
+  linkType: hard
+
+"lodash.merge@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "lodash.merge@npm:4.6.2"
+  checksum: ad580b4bdbb7ca1f7abf7e1bce63a9a0b98e370cf40194b03380a46b4ed799c9573029599caebc1b14e3f24b111aef72b96674a56cfa105e0f5ac70546cdc005
   languageName: node
   linkType: hard
 

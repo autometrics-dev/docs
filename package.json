@@ -10,6 +10,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"@segment/snippet": "^4.16.0",
+		"autometrics": "next",
 		"date-fns": "^2.30.0",
 		"katex": "^0.16.8",
 		"next": "^13.0.6",
