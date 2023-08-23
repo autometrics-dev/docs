@@ -2,8 +2,6 @@ import React from "react";
 import { DocsThemeConfig, useConfig } from "nextra-theme-docs";
 import Logo from "./src/components/Header/Logo";
 
-function Head() {}
-
 const config: DocsThemeConfig = {
   logo: <Logo />,
   darkMode: false,
