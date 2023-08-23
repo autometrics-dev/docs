@@ -2,18 +2,12 @@ import { NextApiRequest } from "next";
 import { ImageResponse } from "next/server";
 import AutometricsLogo from "./_AutometricsLogo";
 import DottedPath from "./_DottedPath";
-import { autometrics, init } from "autometrics";
 
 export const config = {
   runtime: "edge",
 };
 
-init({
-  pushGateway: "https://wercker.fmp.fiberplane.dev/",
-  pushInterval: 0,
-});
-
-async function handler(req: NextApiRequest) {
+export default async function handler(req: NextApiRequest) {
   try {
     const fontData = await fetch(
       new URL("../../../public/resources/Inter-Bold.ttf", import.meta.url),
@@ -72,4 +66,3 @@ async function handler(req: NextApiRequest) {
   }
 }
 
-export default autometrics(handler);
