@@ -1,16 +1,16 @@
-import { NextApiRequest } from "next";
+import { NextApiRequest, PageConfig } from "next";
 import { ImageResponse } from "next/server";
 import AutometricsLogo from "./_AutometricsLogo";
 import DottedPath from "./_DottedPath";
 
-export const config = {
+export const config: PageConfig = {
   runtime: "edge",
 };
 
 export default async function handler(req: NextApiRequest) {
   try {
     const fontData = await fetch(
-      new URL("../../../public/resources/Inter-Bold.ttf", import.meta.url),
+      new URL("/public/resources/Inter-Bold.ttf", import.meta.url),
     ).then((res) => res.arrayBuffer());
 
     const { searchParams } = new URL(req.url as string);
