@@ -1,5 +1,5 @@
 import React from "react";
-import { DocsThemeConfig } from "nextra-theme-docs";
+import { DocsThemeConfig, useConfig } from "nextra-theme-docs";
 import Logo from "./src/components/Header/Logo";
 
 const config: DocsThemeConfig = {
@@ -31,30 +31,44 @@ const config: DocsThemeConfig = {
       titleTemplate: "%s | Autometrics",
     };
   },
-  head: (
-    <>
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="16x16"
-        href="/favicon/AutometricsFavicon-16x16.png"
-      />
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="32x32"
-        href="/favicon/AutometricsFavicon-32x32.png"
-      />
-      <meta
-        property="og:title"
-        content="Autometrics - Developer-first Observability Framework"
-      />
-      <meta
-        property="og:description"
-        content="Autometrics is a developer-first observability framework for understanding the error rate, response time, and  production usage of any function in your code. Implemented in Rust, Typescript, Golang and Python. Built on Open Telemetry and Prometheus."
-      />
-    </>
-  ),
+  head: () => {
+    let { title } = useConfig();
+    title = encodeURIComponent(title);
+
+    let ogEndpoint: string;
+
+    if (process.env.NODE_ENV === "production" && process.env.VERCEL_URL) {
+      ogEndpoint = `https://${process.env.VERCEL_URL}/api/og?title=${title}`;
+    } else {
+      ogEndpoint = `http://localhost:3000/api/og?title=${title}`;
+    }
+
+    return (
+      <>
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon/AutometricsFavicon-16x16.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon/AutometricsFavicon-32x32.png"
+        />
+        <meta
+          property="og:title"
+          content="Autometrics - Developer-first Observability Framework"
+        />
+        <meta
+          property="og:description"
+          content="Autometrics is a developer-first observability framework for understanding the error rate, response time, and  production usage of any function in your code. Implemented in Rust, Typescript, Golang and Python. Built on Open Telemetry and Prometheus."
+        />
+        <meta property="og:image" content={ogEndpoint} />
+      </>
+    );
+  },
   primaryHue: 269,
   docsRepositoryBase: "https://github.com/autometrics-dev/docs",
   sidebar: {
