@@ -26,10 +26,15 @@
 		"newWindow": true,
 		"href": "https://github.com/P2P-Nathan/autometrics-cs"
 	},
+	"deployment": {
+		"type": "separator",
+		"title": "Deployment"
+	},
+	"deploying-prometheus": "Deploying Prometheus",
+	"deploying-explorer": "Deploying Explorer",
 	"other": {
 		"type": "separator",
 		"title": ""
 	},
-	"configuring-prometheus": "Configuring Prometheus",
 	"get-involved": "Get Involved"
 }
