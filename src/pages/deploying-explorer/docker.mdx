@@ -1,0 +1,41 @@
+---
+title: Docker
+---
+
+import { Steps } from "nextra/components";
+
+# Deploying Explorer on Docker 
+Explorer can be deployed to a Docker container and connected to an existing Prometheus instance as part of the `am` binary using the `am proxy` subcommand.
+
+### Requirements
+
+Make sure you have Prometheus running in the environment you're hoping to connect the Explorer to. See [Deploying Prometheus to Docker](deploying-prometheus/docker).
+
+<Steps>
+
+### Pull the `am-proxy` Docker image
+```shell
+docker pull autometrics/am-proxy:latest
+```
+
+### Run with Docker
+
+Run the below command providing the required arguments as environment variables.
+
+##### Arguments
+
+| Variable | Description|
+|----------|------------|
+| `PROMETHEUS_URL` | The URL of the Prometheus instance that Explorer should connect to.|
+
+```shell
+docker run \
+    -e PROMETHEUS_URL="<your_prometheus_url>" \
+    autometrics/am-proxy:latest
+```
+
+### Verify the setup
+
+Once the image is up and running it will automatically make the Explorer available on port **6789**.
+
+</Steps>

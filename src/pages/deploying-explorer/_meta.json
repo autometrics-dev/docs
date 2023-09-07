@@ -1,5 +1,5 @@
 {
-  "local": "Local",
+	"docker": "Docker",
   "kubernetes": "Kubernetes",
-  "fly-io": "Fly.io"
+	"railway": "Railway"
 }
