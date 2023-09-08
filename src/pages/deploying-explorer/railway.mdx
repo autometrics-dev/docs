@@ -1,33 +1,21 @@
 ---
-short: Fly.io
+title: Deploying Explorer on Railway
+short: Railway
 ---
 import { Steps } from "nextra/components";
 
 # Deploying Explorer on Railway
 
-Explorer can be deployed as a Railway service using the `am-proxy` Docker image and a Dockerfile. [Railway will look for a Dockerfile at the service root and include it in the build process](https://docs.railway.app/deploy/dockerfiles).
+Explorer can be deployed as a Railway service using the `am-proxy` Docker image. [Railway now supports deployinj the services from Docker images directly](https://railway.app/changelog/2023-09-01-cron-jobs-ui#docker-image-registry-deploys-ga).
 
 <Steps>
 
-### Create a GitHub repository with a Dockerfile
+### Create a Railway service from a Docker image
 
-Railway enables you to deploy services by adding GitHub repositories.
-
-We can create a minimal repository called e.g.: `your-scope/explorer`, that has just the Dockerfile at the root that Railway will pick up, build, and deploy for us.
-
-```Dockerfile
-FROM autometrics/am-proxy:latest
-
-ENV LISTEN_ADDRESS=$LISTEN_ADDRESS
-ENV PROMETHEUS_URL=$PROMETHEUS_URL
-```
-
-### Create a Railway service from a GitHub repository
-
-Select the previously created `your-scope/explorer` repository. Make sure to provide the correct Prometheus URL (can be internal Railway URL) to the `PROMETHEUS_URL` environment variable (`LISTEN_ADDRESS` is optional) and kick off the deployment.
+Make sure to provide the correct Prometheus URL (can be internal Railway URL) to the `PROMETHEUS_URL` environment variable and kick off the deployment.
 
 ### Verify deployment
 
-The Explorer should be accessible at `<RAILWAY_URL>:6789` - navigate there and verify that it has connected with your Prometheus correctly, you should be seeing your Autometrics data come through.
+The Explorer should be accessible at `<RAILWAY_SERVICE_URL>:6789` - navigate there and verify that it has connected with your Prometheus correctly, you should be seeing your Autometrics data come through.
 
 </Steps>
