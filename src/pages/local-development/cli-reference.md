@@ -15,6 +15,7 @@ This document contains the help content for the `am` command-line program.
 * `init` — Create a new `am.toml` file interactively with sensible defaults
 * `discord` — Open the Fiberplane discord to receive help, send suggestions or discuss various things related to Autometrics and the `am` CLI
 * `update` — Run the updater
+* `list` — List the functions in a project
 
 ###### **Options:**
 
@@ -142,6 +143,67 @@ Run the updater
 ###### **Options:**
 
 * `-f`, `--force` — Whenever to ignore Homebrew checks and forcefully update
+
+
+
+## `am list`
+
+List the functions in a project
+
+**Usage:** `am list <COMMAND>`
+
+###### **Subcommands:**
+
+* `single` — List functions in a single project, giving the language implementation
+* `all` — List functions in all projects under the given directory, detecting languages on a best-effort basis
+
+
+
+## `am list single`
+
+List functions in a single project, giving the language implementation
+
+**Usage:** `am list single [OPTIONS] --language <LANGUAGE> <ROOT>`
+
+###### **Arguments:**
+
+* `<ROOT>` — Root of the project to start the search on:
+- For Rust projects it must be where the Cargo.toml lie,
+- For Go projects it must be the root of the repository,
+- For Python projects it must be the root of the library,
+- For Typescript projects it must be where the package.json lie.
+
+###### **Options:**
+
+* `-l`, `--language <LANGUAGE>` — Language to detect autometrics functions for. Valid values are:
+- 'rust' or 'rs' for Rust,
+- 'go' for Golang,
+- 'typescript', 'ts', 'javascript', or 'js' for Typescript/Javascript,
+- 'python' or 'py' for Python.
+* `-a`, `--all-functions` — List all functions instead of only the autometricized ones (defaults to false)
+
+  Default value: `false`
+* `-p`, `--pretty` — Pretty print the resulting JSON (defaults to false)
+
+  Default value: `false`
+
+
+
+## `am list all`
+
+List functions in all projects under the given directory, detecting languages on a best-effort basis
+
+**Usage:** `am list all [OPTIONS] <ROOT>`
+
+###### **Arguments:**
+
+* `<ROOT>` — Main directory to start the subprojects search on. am currently detects Rust (Cargo.toml), Typescript (package.json), and Golang (go.mod) projects
+
+###### **Options:**
+
+* `-p`, `--pretty` — Pretty print the resulting JSON (defaults to false)
+
+  Default value: `false`
 
 
 
