@@ -14,6 +14,11 @@ Explorer can be deployed as a Railway service using the `am-proxy` Docker image.
 
 Make sure to provide the correct Prometheus URL (can be internal Railway URL) to the `PROMETHEUS_URL` environment variable and kick off the deployment.
 
+
+### Add a PORT environment variable
+
+In order to make Explorer accessible externally - you need to tell Railway which port to listen on using the "magic" `PORT` environment variable.
+
 ### Verify deployment
 
 The Explorer should be accessible at `<RAILWAY_SERVICE_URL>:6789` - navigate there and verify that it has connected with your Prometheus correctly, you should be seeing your Autometrics data come through.
