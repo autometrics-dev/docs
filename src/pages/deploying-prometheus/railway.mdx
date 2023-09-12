@@ -28,8 +28,6 @@ scrape_configs:
 
 See the [Prometheus configuration reference](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) for full details.
 
-
-
 ### Add a Dockerfile in the root of the repository
 
 The below Dockerfile uses the base Prometheus image, loads our configuration, makes the 9090 port available, and runs the container as a `root` user in Docker to make sure it can access the persistent volume properly.
@@ -47,6 +45,7 @@ USER root
 ### Create a Railway service from a GitHub repo
 
 Create a Railway service from our newly created GitHub repo, it should pick up the configuration from the Dockerfile 
+
 ### Add a PORT environment variable
 
 In order to make Prometheus accessible to other services in your Railway project or externally (optional) - you need to tell Railway which port to listen on using the "magic" `PORT` environment variable.
