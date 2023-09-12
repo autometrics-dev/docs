@@ -72,11 +72,11 @@ pub async fn create_user() {
         | `otel-push-exporter-http` |   HTTP    |       `hyper`       |
         | `otel-push-exporter-grpc` |   gRPC    |       `tonic`       |
 
-        |               Feature Flag                | Runtime                                  |
-        |:-----------------------------------------:|:-----------------------------------------|
-        |        `otel-push-exporter-tokio`         | `tokio`                                  |
+        |               Feature Flag                |                 Runtime                  |
+        |:-----------------------------------------:|:----------------------------------------:|
+        |        `otel-push-exporter-tokio`         |                 `tokio`                  |
         | `otel-push-exporter-tokio-current-thread` | `tokio` with `flavor = "current_thread"` |
-        |      `otel-push-exporter-async-std`       | `async-std`                              |
+        |      `otel-push-exporter-async-std`       |               `async-std`                |
 
         Simply pick the corresponding feature flags for your setup from each table and add it to the `autometrics` dependency
         in your `Cargo.toml`, for example:
