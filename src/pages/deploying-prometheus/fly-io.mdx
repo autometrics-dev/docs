@@ -5,15 +5,11 @@ short: Fly.io
 
 # Configuring Prometheus on Fly.io
 
-Once you have your code instrumented with autometrics, you'll need to run
-[Prometheus](https://prometheus.io) and point it at your app. Prometheus is
-pull-based, meaning it will poll your app to scrape the metrics collected.
-
 [Fly.io](https://fly.io) provides a hosted Prometheus instance for every
 project.
 
-To have Fly's Prometheus scrape your autometrics-instrumented app, simply add
-this to your fly.toml:
+To have Fly's Prometheus scrape your Autometrics-instrumented app, simply add
+this to your [`fly.toml` configuration](https://fly.io/docs/reference/configuration/#the-metrics-section):
 
 ```toml filename="fly.toml"
 app = "your-app-name"
