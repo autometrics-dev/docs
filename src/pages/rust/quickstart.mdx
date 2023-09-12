@@ -67,10 +67,14 @@ pub async fn create_user() {
         In order to use those, you will need to add two features depending on what transport you wish to use and which
         async runtime your program is using.
 
+        **Transport**:
+
         |       Feature Flag        | Transport | Client library used |
         |:-------------------------:|:---------:|:-------------------:|
         | `otel-push-exporter-http` | HTTP | `hyper` |
         | `otel-push-exporter-grpc` | gRPC | `tonic` |
+
+        **Runtime**:
 
         |               Feature Flag                |                 Runtime                  |
         |:-----------------------------------------:|:----------------------------------------:|
