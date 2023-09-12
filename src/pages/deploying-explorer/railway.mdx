@@ -1,0 +1,26 @@
+---
+title: Deploying Explorer on Railway
+short: Railway
+---
+import { Steps } from "nextra/components";
+
+# Deploying Explorer on Railway
+
+Explorer can be deployed as a Railway service using the `am-proxy` Docker image. [Railway now supports deployinj the services from Docker images directly](https://railway.app/changelog/2023-09-01-cron-jobs-ui#docker-image-registry-deploys-ga).
+
+<Steps>
+
+### Create a Railway service from a Docker image
+
+Make sure to provide the correct Prometheus URL (can be internal Railway URL) to the `PROMETHEUS_URL` environment variable and kick off the deployment.
+
+
+### Add a PORT environment variable and create an external endpoint
+
+In order to make Explorer accessible externally - you need to tell Railway which port to listen on using the "magic" `PORT` environment variable and create a public endpoint (Railway will generate a URL for you or you can bring your own domain).
+
+### Verify deployment
+
+The Explorer should be accessible at `<RAILWAY_SERVICE_URL>:6789` - navigate there and verify that it has connected with your Prometheus correctly, you should be seeing your Autometrics data come through.
+
+</Steps>

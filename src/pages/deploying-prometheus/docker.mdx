@@ -1,0 +1,69 @@
+---
+title: Deploying Prometheus with Docker
+short: Docker
+---
+import { Callout, Steps, Tabs, Tab } from "nextra-theme-docs";
+
+# Deploying Prometheus with Docker
+
+Prometheus can be easily deployed using Docker - official images are provided on Docker Hub.
+
+### Requirements
+
+Make sure you have Docker running on the system.
+
+<Steps>
+
+### Create a configuration file
+
+Create a file called `prometheus.yml` with the following contents:
+
+```yaml {filename="prometheus.yml"} showLineNumbers
+scrape_configs:
+  - job_name: my-app-name
+    metrics_path: /metrics
+    static_configs:
+      # Replace the port with the port your /metrics endpoint is running on
+      - targets: ["localhost:3000"]
+    scrape_interval: 15s
+```
+
+See the [Prometheus configuration reference](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) for full details.
+
+### Run Prometheus
+
+You can now run Prometheus with the configuration file you created:
+
+```bash
+docker run \
+ -p 9090:9090 \
+ -v prometheus.yml:/etc/prometheus/prometheus.yml \
+ prom/prometheus
+```
+
+### (Production) Create persistent volumes
+
+If you're deploying Prometheus to production using Docker, it is a good practice to create a named persistent volume where Prometheus would store the data. This will ensure your metrics data persists even in case the container shuts down.
+
+To create the volume run the `docker volume create <VOLUME_NAME>` command:
+
+```bash
+docker volume create prometheus-data
+```
+
+And when starting up the Prometheus container make sure to tell Prometheus to use our `prometheus-data` volume:
+
+```bash
+docker run \
+ -p 9090:9090 \
+ -v prometheus-data:/prometheus \
+ -v prometheus.yml:/etc/prometheus/prometheus.yml \
+ prom/prometheus
+```
+
+
+### Verify successful startup
+
+Your Prometheus should now be accessible on `<your_network_host>:9090`!
+
+</Steps>

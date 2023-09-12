@@ -1,0 +1,55 @@
+---
+title: Deploying Prometheus on Railway
+short: Railway
+---
+
+import { Steps } from "nextra/components"
+
+# Deploying Prometheus on Railway
+
+Prometheus is available as an official Docker image on Docker Hub. We can use it as a base image and layer in our configuration before deploying it on Railway.
+
+<Steps>
+
+### Create a GitHub repository and a Prometheus configuration file
+We will use Railway's ability to deploy from a repository and [Dockerfile features](https://docs.railway.app/deploy/dockerfiles) to set up our Prometheus instance.
+
+Create a file called `prometheus.yml` with the following contents:
+
+```yaml {filename="prometheus.yml"} showLineNumbers
+scrape_configs:
+  - job_name: my-app-name
+    metrics_path: /metrics
+    static_configs:
+      # Replace the port with the port your /metrics endpoint is running on
+      - targets: ["localhost:3000"]
+    scrape_interval: 15s
+```
+
+See the [Prometheus configuration reference](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) for full details.
+
+### Add a Dockerfile in the root of the repository
+
+The below Dockerfile uses the base Prometheus image, loads our configuration, makes the 9090 port available, and runs the container as a `root` user in Docker to make sure it can access the persistent volume properly.
+
+```Dockerfile
+FROM prom/prometheus:latest
+
+ADD prometheus.yml /etc/prometheus/
+
+EXPOSE 9090
+
+USER root
+```
+
+### Create a Railway service from a GitHub repo
+
+Create a Railway service from our newly created GitHub repo, it should pick up the configuration from the Dockerfile 
+
+### Add a PORT environment variable
+
+In order to make Prometheus accessible to other services in your Railway project or externally (optional) - you need to tell Railway which port to listen on using the "magic" `PORT` environment variable.
+
+To add it go to Service > Variables and add just the port number.
+
+</Steps>
