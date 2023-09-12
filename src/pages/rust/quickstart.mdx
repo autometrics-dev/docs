@@ -9,7 +9,7 @@ import PreviewMetricsInExplorerSnippet from "@/snippets/preview-in-am-explorer.m
 ### Add Autometrics
 
 ```bash copy
-cargo add autometrics --features=prometheus-exporter
+cargo add autometrics
 ```
 
 ### Add the Autometrics macro
@@ -25,34 +25,79 @@ pub async fn create_user() {
 }
 ```
 
-### Export the metrics for Prometheus
+### Export the metrics
 
-<Callout type="info">
-If you're already using Prometheus metrics in your app, you can skip this step. You only need to configure Autometrics to use the same underlying metrics collection library as your existing Prometheus metrics. See [Metrics Libraries](https://docs.rs/autometrics/latest/autometrics/#metrics-libraries) for more information in the API reference.
-</Callout>
+<Tabs items={['Expose a endpoint for Prometheus', 'Push to a OpenTelemetry collector']}>
+    <Tab>
+        <Callout type="info">
+            If you're already using Prometheus metrics in your app, you can skip this step. You only need to configure Autometrics to use the same underlying metrics collection library as your existing Prometheus metrics. See [Metrics Libraries](https://docs.rs/autometrics/latest/autometrics/#metrics-libraries) for more information in the API reference.
+        </Callout>
 
-Autometrics includes optional functions to help collect and prepare metrics to be scraped by Prometheus.
+        Autometrics includes optional functions to help collect and prepare metrics to be scraped by Prometheus.
+        In order to use those, add the `prometheus-exporter` feature to your `autometrics` dependency in your `Cargo.toml` like this:
 
-In your main function, initialize the `prometheus_exporter`:
+        ```toml
+        autometrics = { version = "*", features = ["prometheus-exporter"] }
+        ```
 
-```rust
-use autometrics::prometheus_exporter;
+        Then, in your main function, initialize the `prometheus_exporter`:
 
-pub fn main() {
-    prometheus_exporter::init();
-    // ...
-}
-```
-And create a route on your API (probably mounted under `/metrics`) that returns the following:
+        ```rust
+        use autometrics::prometheus_exporter;
 
-```rust
-use autometrics::prometheus_exporter::{self, PrometheusResponse};
+        pub fn main() {
+            prometheus_exporter::init();
+            // ...
+        }
+        ```
 
-/// Export metrics for Prometheus to scrape
-pub fn get_metrics() -> PrometheusResponse {
-    prometheus_exporter::encode_http_response()
-}
-```
+        And create a route on your API (probably mounted under `/metrics`) that returns the following:
+
+        ```rust
+        use autometrics::prometheus_exporter::{self, PrometheusResponse};
+
+        /// Export metrics for Prometheus to scrape
+        pub fn get_metrics() -> PrometheusResponse {
+            prometheus_exporter::encode_http_response()
+        }
+        ```
+    </Tab>
+    <Tab>
+        Autometrics includes optional functions to help collect and prepare metrics to be exported to a OpenTelemtry collector.
+        In order to use those, you will need to add two features depending on what transport you wish to choose and which
+        async runtime your program is using.
+
+        |       Feature Flag        | Transport | Client library used |
+        |:-------------------------:|:---------:|:-------------------:|
+        | `otel-push-exporter-http` |   HTTP    |       `hyper`       |
+        | `otel-push-exporter-grpc` |   gRPC    |       `tonic`       |
+
+        |               Feature Flag                | Runtime                                  |
+        |:-----------------------------------------:|:-----------------------------------------|
+        |        `otel-push-exporter-tokio`         | `tokio`                                  |
+        | `otel-push-exporter-tokio-current-thread` | `tokio` with `flavor = "current_thread"` |
+        |      `otel-push-exporter-async-std`       | `async-std`                              |
+
+        Simply pick the corresponding feature flags for your setup from each table and add it to the `autometrics` dependency
+        in your `Cargo.toml`, for example:
+
+        ```toml
+        autometrics = { version = "*", features = ["otel-push-exporter-http", "otel-push-exporter-tokio"] }
+        ```
+
+        Then, in your main function, initialize the `otel_push_exporter` with the method you used depending on your transport:
+
+        ```rust
+        use autometrics::otel_push_exporter;
+
+        pub fn main() {
+            otel_push_exporter::init_http("url");
+            // or
+            otel_push_exporter::init_grpc("url");
+        }
+        ```
+    </Tab>
+</Tabs>
 
 You're set! You can now start your app and preview the metrics.
 
