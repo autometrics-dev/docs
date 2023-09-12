@@ -64,19 +64,19 @@ pub async fn create_user() {
     </Tab>
     <Tab>
         Autometrics includes optional functions to help collect and prepare metrics to be exported to a OpenTelemtry collector.
-        In order to use those, you will need to add two features depending on what transport you wish to choose and which
+        In order to use those, you will need to add two features depending on what transport you wish to use and which
         async runtime your program is using.
 
         |       Feature Flag        | Transport | Client library used |
         |:-------------------------:|:---------:|:-------------------:|
-        | `otel-push-exporter-http` |   HTTP    |       `hyper`       |
-        | `otel-push-exporter-grpc` |   gRPC    |       `tonic`       |
+        | `otel-push-exporter-http` | HTTP | `hyper` |
+        | `otel-push-exporter-grpc` | gRPC | `tonic` |
 
         |               Feature Flag                |                 Runtime                  |
         |:-----------------------------------------:|:----------------------------------------:|
-        |        `otel-push-exporter-tokio`         |                 `tokio`                  |
+        | `otel-push-exporter-tokio` | `tokio` |
         | `otel-push-exporter-tokio-current-thread` | `tokio` with `flavor = "current_thread"` |
-        |      `otel-push-exporter-async-std`       |               `async-std`                |
+        | `otel-push-exporter-async-std` | `async-std` |
 
         Simply pick the corresponding feature flags for your setup from each table and add it to the `autometrics` dependency
         in your `Cargo.toml`, for example:
