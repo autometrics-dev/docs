@@ -69,10 +69,39 @@ pub async fn create_user() {
 
         **Transport**:
 
-        |       Feature Flag        | Transport | Client library used |
-        |---------------------------|-----------|---------------------|
-        | `otel-push-exporter-http` |   HTTP    |       `hyper`       |
-        | `otel-push-exporter-grpc` |   gRPC    |       `tonic`       |
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature Flag</th>
+                    <th>Transport</th>
+                    <th>Client library used</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <code>otel-push-exporter-http</code>
+                    </td>
+                    <td>
+                        HTTP
+                    </td>
+                    <td>
+                        <code>hyper</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>otel-push-exporter-grpc</code>
+                    </td>
+                    <td>
+                        gRPC
+                    </td>
+                    <td>
+                        <code>tonic</code>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
         **Runtime**:
 
