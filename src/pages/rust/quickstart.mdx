@@ -67,51 +67,18 @@ pub async fn create_user() {
         In order to use those, you will need to add two features depending on what transport you wish to choose and which
         async runtime your program is using.
 
-        **Transport**:
+        Choose a **transport**:
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Feature Flag</th>
-                    <th>Transport</th>
-                    <th>Client library used</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <code>otel-push-exporter-http</code>
-                    </td>
-                    <td>
-                        HTTP
-                    </td>
-                    <td>
-                        <code>hyper</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>otel-push-exporter-grpc</code>
-                    </td>
-                    <td>
-                        gRPC
-                    </td>
-                    <td>
-                        <code>tonic</code>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        * `otel-push-exporter-http`: HTTP using `hyper`
+        * `otel-push-exporter-grpc`: gRPC using `tonic`
 
-        **Runtime**:
+        Choose a **Runtime**:
 
-        |               Feature Flag                |                 Runtime                  |
-        |-------------------------------------------|------------------------------------------|
-        |        `otel-push-exporter-tokio`         |                 `tokio`                  |
-        | `otel-push-exporter-tokio-current-thread` | `tokio` with `flavor = "current_thread"` |
-        |      `otel-push-exporter-async-std`       |               `async-std`                |
+        * `otel-push-exporter-tokio`: `tokio`
+        * `otel-push-exporter-tokio-current-thread`: `tokio` with `flavor = "current_thread"`
+        * `otel-push-exporter-async-std`: `async-std`
 
-        Simply pick the corresponding feature flags for your setup from each table and add it to the `autometrics` dependency
+        Simply pick the corresponding feature flags for your setup from each list and add it to the `autometrics` dependency
         in your `Cargo.toml`, for example:
 
         ```toml
