@@ -70,14 +70,14 @@ pub async fn create_user() {
         **Transport**:
 
         |       Feature Flag        | Transport | Client library used |
-        |:-------------------------:|:---------:|:-------------------:|
+        |---------------------------|-----------|---------------------|
         | `otel-push-exporter-http` |   HTTP    |       `hyper`       |
         | `otel-push-exporter-grpc` |   gRPC    |       `tonic`       |
 
         **Runtime**:
 
         |               Feature Flag                |                 Runtime                  |
-        |:-----------------------------------------:|:----------------------------------------:|
+        |-------------------------------------------|------------------------------------------|
         |        `otel-push-exporter-tokio`         |                 `tokio`                  |
         | `otel-push-exporter-tokio-current-thread` | `tokio` with `flavor = "current_thread"` |
         |      `otel-push-exporter-async-std`       |               `async-std`                |
