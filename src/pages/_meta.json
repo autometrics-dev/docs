@@ -32,6 +32,7 @@
 	},
 	"deploying-prometheus": "Deploying Prometheus",
 	"deploying-explorer": "Deploying Explorer",
+	"deploying-alertmanager": "Deploying Alertmanager",
 	"other": {
 		"type": "separator",
 		"title": ""
