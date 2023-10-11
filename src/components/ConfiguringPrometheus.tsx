@@ -3,9 +3,9 @@ import { Cards, Card } from "nextra-theme-docs";
 import { MdxFile } from "nextra";
 
 export default function ConfiguringPrometheus() {
-  const pages = getPagesUnderRoute("/configuring-prometheus").filter((page) => {
+  const pages = getPagesUnderRoute("/deploying-prometheus").filter((page) => {
     return (
-      page.kind === "MdxPage" && page.route !== "/configuring-prometheus/local"
+      page.kind === "MdxPage" && page.route !== "/deploying-prometheus/local"
     );
   });
 
