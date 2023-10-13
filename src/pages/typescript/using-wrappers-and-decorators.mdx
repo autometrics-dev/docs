@@ -22,7 +22,8 @@ Use function wrappers to wrap request handlers, database calls, or other pieces 
 Example:
 
 ```typescript
-import { autometrics } from "autometrics";
+import { Autometrics } from '@autometrics/autometrics';
+
 
 const createUserWithMetrics = autometrics(async function createUser(payload: User) {
   // ...
@@ -40,7 +41,8 @@ Here's a snippet from a NestJS example project that uses Autometrics:
 ```typescript
 import { Controller, Get } from "@nestjs/common";
 import { AppService } from "./app.service";
-import { Autometrics } from "autometrics";
+import { Autometrics } from '@autometrics/autometrics';
+
 
 @Controller()
 export class AppController {
