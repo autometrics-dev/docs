@@ -36,7 +36,7 @@ In the main entrypoint of your program, add the package:
 
 ```go filename="main.go"
 import (
-	autometrics "github.com/autometrics-dev/autometrics-go/pkg/autometrics/prometheus"
+	autometrics "github.com/autometrics-dev/autometrics-go/prometheus/autometrics"
 )
 ```
 
@@ -46,7 +46,8 @@ And then in your main function initialize the metrics:
 	autometrics.Init(
 		nil,
 		autometrics.DefBuckets,
-		autometrics.BuildInfo{}
+		autometrics.BuildInfo{},
+                nil,
 	)
 ```
 
@@ -87,15 +88,20 @@ The generator will augment your doc comment to add quick links to metrics (using
 
 The environment variable `AM_PROMETHEUS_URL` controls the base URL of the instance that is scraping the deployed version of your code. Having an environment variable means you can change the generated links without touching your code. Default value: `http://localhost:9090/`.
 
+<Callout>
+If you do not want to have lengthy documentation generated on top of the function, you can use `//autometrics:inst` annotation instead of `//autometrics:doc`.
+</Callout>
+
 ### Make metrics available to Prometheus
 
 The last step now is to actually expose the generated metrics to the Prometheus instance.
 
-For Prometheus the shortest way is to add the handler code in your main entrypoint:
+For Prometheus the shortest way is to add the handler code in your main entrypoint (this
+example also shows the `Init` call when choosing to use OpenTelemetry to handle metrics):
 
 ```go {12} filename="main.go"
 import (
-	autometrics "github.com/autometrics-dev/autometrics-go/pkg/autometrics/otel"
+	autometrics "github.com/autometrics-dev/autometrics-go/otel/autometrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -103,7 +109,8 @@ func main() {
 	autometrics.Init(
 		"web-server",
 		autometrics.DefBuckets,
-		autometrics.BuildInfo{}
+		autometrics.BuildInfo{},
+                nil,
 	)
 	http.Handle("/metrics", promhttp.Handler())
 }
@@ -124,7 +131,7 @@ You're set! You can now start your app and preview the metrics.
 
 Make sure your Prometheus is configured correctly to find the metrics.
 
-See the [Configuring Prometheus](/configuring-prometheus) section for deploy target-specific instructions. 
+See the [Configuring Prometheus](/deploying-prometheus) section for deploy target-specific instructions. 
 
 Example configuration:
 

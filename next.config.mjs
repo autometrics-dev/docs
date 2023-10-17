@@ -14,8 +14,8 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/configuring-promtheus/:slug",
-        destination: "/deploying-prometheus/:slug",
+        source: "/configuring-prometheus/:slug*",
+        destination: "/deploying-prometheus/:slug*",
         permanent: true,
       },
     ];
