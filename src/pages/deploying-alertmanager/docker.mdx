@@ -1,0 +1,101 @@
+---
+title: Deploying Alertmanager on Docker
+short: Docker
+---
+
+import { Steps } from "nextra/components";
+
+# Deploying Alertmanager on Docker 
+
+Alertmanager is a utility service deployed alongside Prometheus to help route, group, and prioritize alerts. Alertmanager does not trigger alerts - alerting *rules* are set in Prometheus itself, Alertmanager only takes care of the lifecycle of the alert *after* it has been triggered (you can think of it as Zapier but for Prometheus alerts).
+
+Alertmanager is available as a Docker image from the official Prometheus organization.
+
+## Requirements
+
+### Prometheus
+
+Make sure you have Prometheus running in the environment you're hoping to connect the Alertmanager to. See [Deploying Prometheus to Docker](deploying-prometheus/docker).
+
+### Autometrics-instrumented application with defined SLOs
+
+Autometrics enables you to set up smarter alerts using the Service Level Objectives (SLO) approach. You can read more about SLOs in Autometrics [here](/slo) and follow the guides for SLO-instrumentation under each supported language:
+
+- [Rust](/rust/adding-alerts-and-slos)
+- [TypeScript](/typescript/adding-alerts-and-slos)
+- [Go](/go/adding-alerts-and-slos)
+- [Python](/python/adding-alerts-and-slos)
+
+## Instructions
+
+In the following guide we'll deploy a basic Alertmanager instance configured to work best with Autometrics alerts that will post a notification to Slack whenever there's a breach in the SLO we defined earlier with Autometrics.
+
+<Steps>
+
+### Create a Slack application
+
+First, we need to create a Slack application that will be used to send notifications to Slack. You can create a new Slack application [here](https://api.slack.com/apps). Make sure to install it to the workspace you want to send notifications to.
+
+Once you've created and installed the application, you'll need to get the bot token that will be used to send notifications. You can find it under the `OAuth & Permissions` tab in the application settings.
+
+It will look something like this: `xoxb-*****`.
+
+### Create a configuration file for Alertmanager
+
+Create a file called `alertmanager.yml` with the contents below. 
+
+```yaml filename="alertmanager.yml"
+global:
+  resolve_timeout: 1m
+
+route:
+  receiver: "slack-notifications"
+
+receivers:
+  - name: "slack-notifications"
+    slack_configs:
+      - channel: "#alerts" # replace with whichever Slack channel is used
+        send_resolved: true
+        api_url: https://slack.com/api/chat.postMessage
+        http_config:
+          authorization:
+            credentials: xoxb-my-bot-token
+```
+
+The Alertmanager works by defining a set of `receivers` that will be triggered when an alert is triggered. In this case, we're defining a single receiver called `slack-notifications` that will send a notification to Slack.
+
+Alertmanager configuration can be updated at runtime without restarting the service: you can simply update the configuration file `alertmanager.yml` and send a POST request to the `<alertmanager_host>/-/reload` endpoint to reload the configuration.
+
+You can read more about the configuration options available in the [Alertmanager documentation](https://prometheus.io/docs/alerting/latest/configuration/).
+
+### Run the Docker image
+
+Run the following command to start the Alertmanager Docker image:
+
+```bash
+docker run \
+    -p 9093:9093 \
+    -v $(pwd)/alertmanager.yml:/etc/alertmanager/alertmanager.yml \
+    prom/alertmanager:latest
+```
+
+This will start the Alertmanager service on port `9093` and mount the configuration file we created earlier.
+
+### Update Prometheus configuration
+
+Now that we have the Alertmanager running, we need to update the Prometheus configuration to point to the Alertmanager instance we just started.
+
+Open the Prometheus configuration file `prometheus.yml` and add the following configuration:
+
+```yaml filename="prometheus.yml"
+scrape_configs:
+  # ...
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - "alertmanager:9093" # or the host address of the Alertmanager instance
+```
+
+</Steps>
