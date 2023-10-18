@@ -1,13 +1,15 @@
-import ConfiguringPrometheus from "@/components/ConfiguringPrometheus.tsx";
+import DeployingPrometheus from "@/components/DeployingPrometheus.tsx";
 import { Cards, Card } from "nextra-theme-docs"
 
-# Configuring Prometheus
+# Deploying Prometheus
 
-To see your Autometrics-instrumented metrics, you'll need to run [Prometheus](https://prometheus.io). Prometheus is pull-based, meaning it will poll your app on an endpoint you specify to sample the metrics.
+Autometrics is built on top of [Prometheus](https://prometheus.io) - a popular open source timeseries database and alerting system.
+
+To see the metrics your instrumented app generates you will need to deploy a Prometheus instance alongside it. Prometheus is pull-based, meaning that once deployed it will poll your app on an endpoint you specify to sample the metrics.
 
 ## Prometheus locally
 
-Here's how you can setup Prometheus locally:
+To get started and understand how Prometheus works you can run it locally:
 
 <Cards num={1}>
 	<Card
@@ -28,4 +30,4 @@ Here's how you can setup Prometheus locally:
 
 If you've already tried out Autometrics with Prometheus locally and want to set it up in production, see instructions below for specific deploy targets.
 
-<ConfiguringPrometheus />
+<DeployingPrometheus />

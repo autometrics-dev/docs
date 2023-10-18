@@ -1,0 +1,22 @@
+import { Cards, Card } from "nextra-theme-docs"
+
+# Deploying Explorer
+
+Explorer is a special Autometrics-specific interface for Prometheus data. It is a simple client-based application that connects to a running Prometheus instance. Once connected it automatically recognizes Autometrics-labeled metrics and visualizes them in a simple and easy to use interface.
+
+## Running Explorer locally
+
+Explorer runs on top of the `am` CLI - simply download, install, and run the CLI and Explorer will be available at `http://localhost:8080`.
+
+See [Local Development](/docs/local-development) for more information.
+
+## Deploying Explorer
+
+The `am` CLI can be run as a simple service app and is available as a Docker image. See guides below for platform-specific instructions.
+
+<Cards num={1}>
+	<Card
+	children icon title = "Deploying Explorer with Docker" href="/deploying-explorer/docker"/>
+	<Card
+	children icon title = "Deploying Explorer on Railway" href="/deploying-explorer/railway"/>
+</Cards>
