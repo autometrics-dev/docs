@@ -1,0 +1,27 @@
+---
+title: Deploying Explorer on Northflank
+short: Northflank
+---
+import { Steps } from "nextra/components";
+
+# Deploying Explorer on Northflank
+
+Explorer can be deployed as a Railway service using the `autometricsw/am-proxy` Docker image. [Northflank supports running images from a container registery](https://northflank.com/docs/v1/application/run/run-an-image-from-a-container-registry). If no container registery is provided Northflank will default to Dockerhub.
+
+<Steps>
+
+### Create a Northflank service from a Docker image
+
+Make sure to provide an environment variable with the key `PROMETHEUS_URL` and add as a value the correct Prometheus URL (can be an internal Northflank one, e.g.: `http://prometheus:9090` ) and kick off the deployment.
+
+
+### Add network configurations
+
+In order to make Explorer accessible externally - you need to configure the service network in the Northflank UI. Under Port & DNS make sure to tick the box `Publicly expose this port to the internet`. 
+(Northflank will generate a URL for you or you can bring your own domain) 
+
+### Verify deployment
+
+The Explorer should be accessible at the public generate service URL - navigate there and verify that it has connected with your Prometheus correctly, you should be seeing your Autometrics data come through.
+
+</Steps>
