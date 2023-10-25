@@ -1,0 +1,59 @@
+---
+title: Deploying Prometheus on Northflank
+short: Northflank
+---
+
+import { Steps } from "nextra/components"
+
+# Deploying Prometheus on Northflank
+
+Prometheus is available as an official Docker image on Docker Hub. We can use it as a base image and layer in our configuration before deploying it on Northflank.
+
+<Steps>
+
+### Create a GitHub repository and a Prometheus configuration file
+We will use Northflank's ability to deploy from a repository using a [Dockerfile](https://northflank.com/docs/v1/application/build/build-with-a-dockerfile) to set up our Prometheus instance.
+
+Create a file called `prometheus.yml` with the following contents:
+
+```yaml {filename="prometheus.yml"} showLineNumbers
+scrape_configs:
+  - job_name: my-app-name
+    metrics_path: /metrics
+    static_configs:
+      # Replace the port with the port your /metrics endpoint is running on
+      - targets: ["your-app-on-northflank:3000"]
+    scrape_interval: 15s
+```
+
+See the [Prometheus configuration reference](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) for full details.
+
+### Add a Dockerfile in the root of the repository
+
+The below Dockerfile uses the base Prometheus image, loads our configuration, makes the 9090 port available, and runs the container as a `root` user in Docker to make sure it can access the persistent volume properly.
+
+```Dockerfile
+FROM prom/prometheus:latest
+
+ADD prometheus.yml /etc/prometheus/
+
+EXPOSE 9090
+
+USER root
+```
+
+### Create a Northflank service from a GitHub repo
+
+Create a Northflank service from our newly created GitHub repo, it should pick up the configuration from the Dockerfile 
+
+### Add Network configurations
+
+In order to make Prometheus accessible to other services in your Northflank network or externally configure the PORT & DNS settings under the service network section in the Northflank UI. 
+Northflank picks automatically up the port number that is specified in the Dockerfile. 
+
+Ensure in the settings that the `Port` is set to 9090 and choose TCP as `Protocol`.
+
+![Northflank add network settings for Prometheus](/images/northflank_networking_prometheus.png)
+
+
+</Steps>
