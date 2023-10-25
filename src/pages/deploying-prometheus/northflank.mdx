@@ -48,8 +48,12 @@ Create a Northflank service from our newly created GitHub repo, it should pick u
 
 ### Add Network configurations
 
-In order to make Prometheus accessible to other services in your Northflank network or externally configure the PORT & DNS settings under the service network section in the Northflank UI.
-If you want to connect it to the Autometrics Explorer ensure to set the `Port` to 9090 and choose TCP as `Protocol`.
+In order to make Prometheus accessible to other services in your Northflank network or externally configure the PORT & DNS settings under the service network section in the Northflank UI. 
+Northflank picks automatically up the port number that is specified in the Dockerfile. 
+
+Ensure in the settings that the `Port` is set to 9090 and choose TCP as `Protocol`.
+
+![Northflank add network settings for Prometheus](/images/northflank_networking_prometheus.png)
 
 
 </Steps>
