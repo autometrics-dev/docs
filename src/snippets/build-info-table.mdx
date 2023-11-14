@@ -2,10 +2,10 @@
 
 Autometrics makes it easy to spot versions and commits that introduce errors or latency.
 
-It produces a `build_info` metric and uses labels to expose the version, commit and branch information of your app to Prometheus.
+It produces a `build_info` metric and uses labels to expose various metadata related to your app to Prometheus.
 
 ```prometheus 
-build_info{branch="main",commit="5cc2aa5447907fbf0a7ddd",version="1.0.0"} 1
+build_info{branch="main",commit="4cfd2f3b26224fa82daf4ba68fe36e188f3153ff",version="1.0.0",service_name="api",repo_url="https://github.com/autometrics-dev/autometrics-rs",repo_provider="github",autometrics_version="1.0.0"} 1
 ```
 
 Labels are exposed and can be set as environment variables at compile or run time:
@@ -16,6 +16,7 @@ Labels are exposed and can be set as environment variables at compile or run tim
             <th>Label</th>
             <th>Environment Variables</th>
             <th>Default</th>
+            <th>Description</th>
         </tr>
     </thead>
     <tbody>
@@ -23,16 +24,44 @@ Labels are exposed and can be set as environment variables at compile or run tim
             <td><code>version</code></td>
             <td><code>AUTOMETRICS_VERSION</code> {props?.version?.env ? "or " + props.version.env : undefined}</td>
             <td><code>{props?.version?.default ?? "\"\""}</code></td>
+            <td>The version of your app</td>
         </tr>
         <tr>
             <td><code>commit</code></td>
             <td><code>AUTOMETRICS_COMMIT</code> {props?.commit?.env ? "or " + props.commit.env : undefined}</td>
             <td><code>{props?.commit?.default ?? "\"\""}</code></td>
+            <td>The Git SHA-1 commit hash of your app</td>
         </tr>
-        <tr>
+        <tr>    
             <td><code>branch</code></td>
             <td><code>AUTOMETRICS_BRANCH</code> {props?.branch?.env ? "or " + props.branch.env : undefined}</td>
             <td><code>{props?.branch?.default ?? "\"\""}</code></td>
+            <td>The Git branch of your app</td>
+        </tr>
+        <tr>
+            <td><code>autometrics.version</code></td>
+            <td>None</td>
+            <td><code>1.0.0</code></td>
+            <td>The version of the Autometrics spec your app is targeting. You cannot modify this value, it is hardcoded.</td>
+        </tr>
+        <tr>
+            <td><code>service.name</code></td>
+            <td><code>AUTOMETRICS_SERVICE_NAME</code>, <code>OTEL_SERVICE_NAME</code> {props?.service_name?.env ? "or " + props.service_name.env : undefined}</td>
+            <td><code>{props?.service_name?.default ?? "\"\""}</code></td>
+            <td>Name of the service</td>
+        </tr>
+        </tr>
+        <tr>
+            <td><code>repository.url</code></td>
+            <td><code>AUTOMETRICS_REPOSITORY_URL</code> {props?.repo_url?.env ? "or " + props.repo_url.env : undefined}</td>
+            <td><code>{props?.repo_url?.default ?? "\"\""}</code></td>
+            <td>Repository url where the source code of your app is available</td>
+        </tr>
+        <tr>
+            <td><code>repository.provider</code></td>
+            <td><code>AUTOMETRICS_REPOSITORY_PROVIDER</code> {props?.repo_provider?.env ? "or " + props.repo_provider.env : undefined}</td>
+            <td><code>{props?.repo_provider?.default ?? "\"\""}</code></td>
+            <td>Repository provider for `repository.url`, e.g `github` or `gitlab`</td>
         </tr>
     </tbody>
 </table>}

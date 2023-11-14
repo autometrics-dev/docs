@@ -13,6 +13,13 @@ import BuildInfoTable from "@/snippets/build-info-table.mdx"
     branch={{
         env: "VERGEN_GIT_BRANCH",
     }}
+    service_name={{
+        env: "CARGO_PKG_NAME"
+    }}
+    repo_url={{
+        env: "CARGO_PKG_REPOSITORY"
+    }}
+    repo_provider={{}}
 />
 
 <Steps>
