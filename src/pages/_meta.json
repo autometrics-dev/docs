@@ -33,6 +33,7 @@
 	"deploying-prometheus": "Deploying Prometheus",
 	"deploying-explorer": "Deploying Explorer",
 	"deploying-alertmanager": "Deploying Alertmanager",
+	"deploying-otel-collector": "Deploying OTel Collector",
 	"other": {
 		"type": "separator",
 		"title": ""
