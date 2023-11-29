@@ -2,16 +2,47 @@
 title: Deploying Prometheus in Kubernetes
 short: Kubernetes
 ---
+
+import { Steps, Tabs, Tab } from "nextra/components"
+
 # Deploying Prometheus in Kubernetes
+
+Prometheus is the most popular open-source monitoring solution for Kubernetes, therefore deploying and configuring it is pretty straightforward.
 
 Prometheus supports service discovery, so it can automatically find Kubernetes
 pods to scrape.
 
-If you have Prometheus installed using the [helm
-chart](https://github.com/prometheus-community/helm-charts), service discovery
-should be enabled by default.
+#### Pre-requisites
+- Kubernetes cluster running with `kubectl` configured to access it
+- Make sure you have [Helm](https://helm.sh/docs/intro/install) installed
 
-Add the following annotations to your app's deployment:
+<Steps>
+
+### Create a `monitoring` namespace
+
+It is a good practice to keep all monitoring resources in a separate namespace.
+
+```bash
+kubectl create namespace monitoring
+```
+
+### Deploy Prometheus to Kubernetes
+
+
+Run the following command to install Prometheus using the Helm chart:
+
+```bash
+helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring
+```
+
+This will install Prometheus in your cluster along with Alertmanager, Node Exporter, and a few other components.
+
+
+### Make Autometrics available to Prometheus on Kubernetes
+
+If you have installed Prometheus using the [helm chart](https://github.com/prometheus-community/helm-charts), service discovery should be enabled by default.
+
+Service discovery uses Kubernetes labels to tell Prometheus which ports to look for. In order to make sure that your application metrics are available add the following annotations to your app's deployment:
 
 ```yaml filename="deployment.yaml"
 apiVersion: apps/v1
@@ -22,5 +53,7 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"
-        prometheus.io/port: "9091"
+        prometheus.io/port: "9464" # this can be different depending on which library you have used for instrumentation
 ```
+
+</Steps>
