@@ -1,0 +1,89 @@
+---
+title: Deploying Explorer in Kubernetes
+short: Kubernetes
+---
+
+import { Steps, Tabs, Tab } from "nextra/components"
+
+# Deploying Explorer in Kubernetes
+
+Explorer can be deployed in Kubernetes using the Docker image of the `am` CLI tool.
+
+#### Requirements
+- Kubernetes cluster running with `kubectl` configured to access it
+
+<Steps>
+
+### Create a `monitoring` namespace
+
+It is a good practice to keep all monitoring resources in a separate namespace. To create a namespace run the following command:
+
+```bash
+kubectl create namespace monitoring
+```
+
+(If you already have a namespace for monitoring, you can skip this step)
+
+### Create a deployment and service configuration
+
+In order to deploy Explorer, we need it to successfully connect to Prometheus and be made accessible from outside the cluster. To do that we will create a deployment and a service configuration.
+
+As the configuration is quite simple we keep it in a single file, but it is also possible to split it into two files.
+
+Create a file named `explorer.yaml` with the following content:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: explorer
+  namespace: monitoring
+  labels:
+    app: explorer
+spec:
+  selector:
+    matchLabels:
+      app: explorer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: explorer
+    spec:
+      containers:
+      - name: explorer
+        image: autometrics/am-proxy:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PROMETHEUS_URL
+          value: http://<prometheus_service_name>.<namespace>.svc.cluster.local
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: explorer
+  namespace: monitoring
+spec:
+  selector:
+    app: explorer
+  type: LoadBalancer
+  ports:
+    - port: 6789
+      targetPort: 6789 # Explorer default port
+```
+
+Note: the `LoadBalancer` configuration will vary depending on the Kubernetes provider and will need to be adapted accordingly. The above configuration is for a Kubernetes cluster running locally with [minikube](https://minikube.sigs.k8s.io/docs/).
+
+### Apply the configuration
+
+To apply the configuration run the following command:
+
+```bash
+kubectl apply -f explorer.yaml
+```
+
+### Verify the deployment
+
+To verify that the deployment was successful, navigate to the URL of the service. If the deployment was successful, you should see the Explorer UI.
+
+</Steps>
