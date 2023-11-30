@@ -30,10 +30,10 @@
 		"type": "separator",
 		"title": "Deployment"
 	},
-	"deploying-prometheus": "Deploying Prometheus",
-	"deploying-explorer": "Deploying Explorer",
-	"deploying-alertmanager": "Deploying Alertmanager",
-	"deploying-otel-collector": "Deploying OTel Collector",
+	"deploying-prometheus": "Prometheus",
+	"deploying-explorer": "Explorer",
+	"deploying-alertmanager": "Alertmanager",
+	"deploying-otel-collector": "OTel Collector",
 	"other": {
 		"type": "separator",
 		"title": ""
