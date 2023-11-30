@@ -38,7 +38,7 @@ helm install prometheus prometheus-community/kube-prometheus-stack --namespace m
 This will install Prometheus in your cluster along with Alertmanager, Node Exporter, and a few other components.
 
 
-### Make Autometrics available to Prometheus on Kubernetes
+### Make Autometrics discoverable
 
 If you have installed Prometheus using the [helm chart](https://github.com/prometheus-community/helm-charts), service discovery should be enabled by default.
 
@@ -54,6 +54,51 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"
         prometheus.io/port: "9464" # this can be different depending on which library you have used for instrumentation
+```
+
+### (Optional) Add Autometrics ruleset to Prometheus
+
+If you want to make use of the SLO alerting features in Autometrics, you need to add the Autometrics alerting rules to your Prometheus instance.
+
+You can find the ruleset in the [Autometrics repository](https://github.com/autometrics-dev/autometrics-shared/blob/main/autometrics.rules.yml).
+
+#### Save the ruleset to a file
+
+```bash
+curl https://raw.githubusercontent.com/autometrics-dev/autometrics-shared/main/autometrics.rules.yml > autometrics.rules.yml
+```
+
+#### Create a ConfigMap from the ruleset
+
+```bash
+kubectl create configmap autometrics-rules --from-file=autometrics.rules.yml --namespace monitoring
+```
+
+#### Create a `values.yaml` file for the Prometheus Helm chart
+
+The `values.yaml` file is used to add extra configuration to the Prometheus Helm chart. In this case we will mount the extra configuration as a ConfigMap and modify Prometheus configuration to include the Autometrics ruleset.
+
+```yaml filename="values.yaml"
+server:
+  extraConfigmapMounts:
+    - name: autometrics-rules
+      mountPath: /autometrics-alerts/
+      configMap: autometrics-rules
+      readOnly: true
+serverFiles:
+  prometheus.yml:
+    rule_files:
+      - /etc/config/recording_rules.yml # leave whichever rules you have already
+      - /etc/config/alerting_rules.yml #
+      - /autometrics-alerts/autometrics.rules.yml # <- add the autometrics ruleset here
+```
+
+#### Upgrade Prometheus using Helm
+
+Upgrade the Prometheus installation using the `helm upgrade` command, passing in the `values.yaml` file.
+
+```bash
+helm upgrade prometheus prometheus-community/kube-prometheus-stack --namespace monitoring -f values.yaml
 ```
 
 </Steps>
