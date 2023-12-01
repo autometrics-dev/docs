@@ -13,7 +13,7 @@ There is a one-time setup phase to prime the code for autometrics. Once this pha
 
 The generator is the binary in cmd/autometrics, so the easiest way to get it is to install it through Go:
 
-```bash
+```bash filename="Shell"
 go install github.com/autometrics-dev/autometrics-go/cmd/autometrics@latest
 ```
 
@@ -21,7 +21,7 @@ go install github.com/autometrics-dev/autometrics-go/cmd/autometrics@latest
 
 In order to have autometrics visible then, make sure that the directory `$GOBIN` (or the default `$GOPATH/bin`) is in your `$PATH`:
 
-```bash
+```bash filename="Shell"
 echo "$PATH" | grep -q "${GOBIN:-$GOPATH/bin}" && echo "GOBIN in PATH" || echo "GOBIN not in PATH, please add it"
 GOBIN in PATH
 ```
@@ -47,16 +47,24 @@ import (
 And then in your main function initialize the metrics:
 
 ```go filename="main.go"
-	autometrics.Init(
-		nil,
-		autometrics.DefBuckets,
-		autometrics.BuildInfo{ Version: "2.1.37", Commit: "anySHA", Branch: "", Service: "myApp" },
-        nil,
-        nil
-	)
+	autometrics.Init()
 ```
 
 ### Add `go:generate autometrics` to your code
+
+#### Automatically
+
+You can use the `am` binary and its `instrument` subcommand to automatically instrument your whole codebase. You can also use a grep invocation:
+
+```bash filename="Shell"
+# On Linux, use sed, not gsed
+find . \
+  -type d -name vendor -prune -or \
+  -type f -name '*.go' \
+  -print0 | xargs -0 gsed -i -e '/package/{a\//go:generate autometrics --inst-all --no-doc' -e ':a;n;ba}'
+```
+
+#### Manually
 
 The manual changes you need to do are:
 
@@ -76,13 +84,7 @@ If you want the generated metrics to contain the function success rate, you must
 
 ### Generate the documentation and instrumentation code
 
-Install the go generator using `go install` as usual:
-
-```bash filename="Shell"
-go install https://github.com/autometrics-dev/autometrics-go/cmd/autometrics@latest
-```
-
-Once you've done this, the `autometrics` generator takes care of the rest, and you can
+As you have installed the generator as part of the prerequisites, it will take care of the rest, and you can
 simply call `go generate` with an optional environment variable:
 
 ```bash filename="Shell"
@@ -112,11 +114,10 @@ import (
 
 func main() {
 	autometrics.Init(
-		"web-server",
-		autometrics.DefBuckets,
-		autometrics.BuildInfo{ Version: "2.1.37", Commit: "anySHA", Branch: "", Service: "myApp" },
-        nil,
-        nil
+		autometrics.WithService("web-server"),
+		autometrics.WithMeterName("web-server"),
+		autometrics.WithCommit("anySHA"),
+		autometrics.WithVersion("2.1.37"),
 	)
 	http.Handle("/metrics", promhttp.Handler())
 }
@@ -147,11 +148,10 @@ And then in your main function initialize the metrics:
 
 ```go filename="main.go"
 	autometrics.Init(
-		"myApp/v2/prod",
-		autometrics.DefBuckets,
-		autometrics.BuildInfo{ Version: "2.1.37", Commit: "anySHA", Branch: "", Service: "myApp" },
-        nil,
-        nil
+		autometrics.WithService("myApp"),
+		autometrics.WithMeterName("myApp/v2/prod"),
+		autometrics.WithCommit("anySHA"),
+		autometrics.WithVersion("2.1.37"),
 	)
 ```
 
@@ -198,20 +198,18 @@ If you do not want to have lengthy documentation generated on top of the functio
 
 ### Push metrics to the OpenTelemetry collector
 
-If you have an OTLP collector setup with an accessible URL, then you can directly push your metrics to it by passing a non-`nil` argument to `autometrics.Init` for the pushConfiguration:
+If you have an OTLP collector setup with an accessible URL, then you can directly push your metrics to it by passing the relevant `WithPush...` options to `autometrics.Init`:
 
 ```go {6-11}
 shutdown, err := autometrics.Init(
-		"myApp/v2/prod",
-		autometrics.DefBuckets,
-		autometrics.BuildInfo{ Version: "2.1.37", Commit: "anySHA", Branch: "", Service: "myApp" },
-		&autometrics.PushConfiguration{
-			CollectorURL: "https://collector.example.com",
-			JobName: "instance_2", // You can leave the JobName out to let autometrics generate one
-			Period: 1 * time.Second,
-			Timeout: 500 * time.Millisecond,
-		},
-        nil,
+		autometrics.WithService("myApp"),
+		autometrics.WithMeterName("myApp/v2/prod"),
+		autometrics.WithCommit("anySHA"),
+		autometrics.WithVersion("2.1.37"),
+		autometrics.WithPushCollectorURL("https://collector.example.com"),
+		autometrics.WithPushJobName("instance_2"), // You can leave the JobName out to let autometrics generate one
+		autometrics.WithPushPeriod(1 * time.Second),
+		autometrics.WithPushTimeout(500 * time.Millisecond),
 	)
 ```
 
