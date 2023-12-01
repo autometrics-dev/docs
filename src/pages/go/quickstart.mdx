@@ -13,7 +13,7 @@ There is a one-time setup phase to prime the code for autometrics. Once this pha
 
 The generator is the binary in cmd/autometrics, so the easiest way to get it is to install it through Go:
 
-```bash
+```bash filename="Shell"
 go install github.com/autometrics-dev/autometrics-go/cmd/autometrics@latest
 ```
 
@@ -21,7 +21,7 @@ go install github.com/autometrics-dev/autometrics-go/cmd/autometrics@latest
 
 In order to have autometrics visible then, make sure that the directory $GOBIN (or the default $GOPATH/bin) is in your $PATH:
 
-```bash
+```bash filename="Shell"
 echo "$PATH" | grep -q "${GOBIN:-$GOPATH/bin}" && echo "GOBIN in PATH" || echo "GOBIN not in PATH, please add it"
 GOBIN in PATH
 ```
@@ -43,15 +43,24 @@ import (
 And then in your main function initialize the metrics:
 
 ```go filename="main.go"
-	autometrics.Init(
-		nil,
-		autometrics.DefBuckets,
-		autometrics.BuildInfo{},
-                nil,
-	)
+	autometrics.Init()
 ```
 
 ### Add `go:generate autometrics` to your code
+
+#### Automatically
+
+You can use the `am` binary and its `instrument` subcommand to automatically instrument your whole codebase. You can also use a grep invocation:
+
+```bash filename="Shell"
+# On Linux, use sed, not gsed
+find . \
+  -type d -name vendor -prune -or \
+  -type f -name '*.go' \
+  -print0 | xargs -0 gsed -i -e '/package/{a\//go:generate autometrics --inst-all --no-doc' -e ':a;n;ba}'
+```
+
+#### Manually
 
 The manual changes you need to do are:
 
@@ -71,13 +80,7 @@ If you want the generated metrics to contain the function success rate, you must
 
 ### Generate the documentation and instrumentation code
 
-Install the go generator using `go install` as usual:
-
-```bash filename="Shell"
-go install https://github.com/autometrics-dev/autometrics-go/cmd/autometrics@latest
-```
-
-Once you've done this, the `autometrics` generator takes care of the rest, and you can
+As you have installed the generator as part of the prerequisites, it will take care of the rest, and you can
 simply call `go generate` with an optional environment variable:
 
 ```bash filename="Shell"
@@ -107,10 +110,7 @@ import (
 
 func main() {
 	autometrics.Init(
-		"web-server",
-		autometrics.DefBuckets,
-		autometrics.BuildInfo{},
-                nil,
+		autometrics.WithService("web-server"),
 	)
 	http.Handle("/metrics", promhttp.Handler())
 }
