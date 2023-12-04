@@ -5,14 +5,16 @@ short: Northflank
 import { Steps } from "nextra/components";
 
 # Deploying OTel Collector on Northflank
-OTel Collector is available as an official [Docker image](https://hub.docker.com/r/otel/opentelemetry-collector) on Docker Hub. We can use it as a base image and layer in our configuration before deploying it on Railway
+OTel Collector is available as an official [Docker image](https://hub.docker.com/r/otel/opentelemetry-collector) on Docker Hub. We can use it as a base image and layer in our configuration before deploying it on Railway.
+You find the resources for the Deployment [here](https://github.com/autometrics-dev/autometrics-shared/tree/main/deployment-guides-resources/otel-collector).
 
 <Steps>
 
 ### Create a GitHub repository and a Otel Collector configuration file
 We will use Northflank's ability to deploy from a repository using a [Dockerfile](https://northflank.com/docs/v1/application/build/build-with-a-dockerfile) to set up our Prometheus instance.
 
-Create a file named `otel-collector-config.yaml` to specify a receiver endpoint for sending metrics from the instrumented application
+Create a file named `otel-collector-config.yaml` to specify a receiver endpoint for sending metrics from the instrumented application.
+
 
 ```yaml {filename="otel-collector-config.yml"} showLineNumbers
 receivers:
@@ -25,6 +27,7 @@ receivers:
     metrics:
       receivers: [otlp]
 ```
+
 #### Optional: Export metrics
 As the OTel Collector acts as a proxy, we can define an exporter to send metrics. 
 In this example, metrics are pushed to [Prometheus's remote write receiver](https://prometheus.io/docs/prometheus/latest/querying/api/#remote-write-receiver). 
@@ -41,8 +44,10 @@ exporters:
     metrics:
       exporters: [prometheusremotewrite]
 ```
+You can find an example otel-config.yaml [here](https://github.com/autometrics-dev/autometrics-shared/blob/main/deployment-guides-resources/otel-collector/otel-collector-config.yaml).
+
 ### Add a Dockerfile in the root of the repository
-The below Dockerfile uses the base Otel Collector image and loads our configuration 
+The below [Dockerfile](https://github.com/autometrics-dev/autometrics-shared/blob/main/deployment-guides-resources/otel-collector/Dockerfiles) uses the base Otel Collector image and loads our configuration 
 
 ```Dockerfile 
 FROM otel/opentelemetry-collector:latest
