@@ -22,15 +22,50 @@ def create_user(name):
    # ...
 ```
 
-### Set the metrics collection library (optional)
+### Configure metrics exporting
 
-Use the environment variable `AUTOMETRICS_TRACKER` to set the metrics collection
-library. The default is `OPEN_TELEMETRY`.
+You can configure `autometrics` to export using either Prometheus or OpenTelemetry libraries by calling the `init` function:
 
-Options:
-- `OPEN_TELEMETRY` - uses `opentelemetry` to collect and expose metrics
-- `PROMETHEUS` - uses `prometheus_client` to collect and expose metrics
+<Tabs items={["Using Prometheus client", "Using OpenTelemetry"]}> 
 
+<Tab>
+
+Autometrics supports exporting metrics to Prometheus via the Prometheus Python client. This example uses the Prometheus Python client, available settings are same as the Prometheus Python client. By default, the Prometheus exporter will expose metrics on port 9464. 
+
+```python
+from autometrics import autometrics, init
+
+init(
+    tracker="prometheus",
+    exporter={
+        "type": "prometheus",
+        "port": 9464,
+    },
+    service_name="my-service",
+)
+```
+</Tab>
+
+<Tab>
+
+Autometrics supports exporting metrics to OTLP collectors via gRPC and HTTP transports. This example uses the HTTP transport, available settings are similar to the OpenTelemetry Python SDK. By default, the OTLP exporter will send metrics to `localhost:4318`.
+
+```python
+from autometrics import autometrics, init
+
+init(
+    exporter={
+        "type": "otlp-proto-http",
+        "endpoint": "http://your-otlp-endpoint",
+        "push_interval": 1000,
+    },
+    service_name="otlp-exporter",
+)
+```
+
+</Tab>
+
+</Tabs>
 </Steps>
 
 ## Viewing your metrics

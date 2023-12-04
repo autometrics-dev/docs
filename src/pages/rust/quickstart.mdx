@@ -8,13 +8,15 @@ import PreviewMetricsInExplorerSnippet from "@/snippets/preview-in-am-explorer.m
 <Steps>
 ### Add Autometrics
 
+Add the `autometrics` crate dependency using `cargo`:
+
 ```bash copy
 cargo add autometrics
 ```
 
 ### Add the Autometrics macro
 
-Add the `#[autometrics]` to the functions you want to instrument with metrics
+Add the `#[autometrics]` macro to the functions you want to instrument with metrics
 
 ```rust
 use autometrics::autometrics;
@@ -27,7 +29,7 @@ pub async fn create_user() {
 
 ### Export the metrics
 
-<Tabs items={['Expose a endpoint for Prometheus', 'Push to a OpenTelemetry collector']}>
+<Tabs items={['Expose an endpoint for Prometheus', 'Push to a OpenTelemetry collector']}>
     <Tab>
         <Callout type="info">
             If you're already using Prometheus metrics in your app, you can skip this step. You only need to configure Autometrics to use the same underlying metrics collection library as your existing Prometheus metrics. See [Metrics Libraries](https://docs.rs/autometrics/latest/autometrics/#metrics-libraries) for more information in the API reference.
