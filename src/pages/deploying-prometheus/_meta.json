@@ -1,11 +1,8 @@
 {
-  "docker": "Docker",
-  "local": "Local",
-  "kubernetes": "Kubernetes",
-	
-  "fly-io": "Fly.io",
-  "northflank": "Northflank",
-  "railway": "Railway"
-
-  
+	"docker": "Docker",
+	"kubernetes": "Kubernetes",
+	"local": "Local",
+	"fly-io": "Fly.io",
+	"northflank": "Northflank",
+	"railway": "Railway"
 }

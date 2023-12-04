@@ -13,20 +13,24 @@ There is a one-time setup phase to prime the code for autometrics. Once this pha
 
 The generator is the binary in cmd/autometrics, so the easiest way to get it is to install it through Go:
 
-```bash
+```bash filename="Shell"
 go install github.com/autometrics-dev/autometrics-go/cmd/autometrics@latest
 ```
 
 ### Add the generator to your PATH
 
-In order to have autometrics visible then, make sure that the directory $GOBIN (or the default $GOPATH/bin) is in your $PATH:
+In order to have autometrics visible then, make sure that the directory `$GOBIN` (or the default `$GOPATH/bin`) is in your `$PATH`:
 
-```bash
+```bash filename="Shell"
 echo "$PATH" | grep -q "${GOBIN:-$GOPATH/bin}" && echo "GOBIN in PATH" || echo "GOBIN not in PATH, please add it"
 GOBIN in PATH
 ```
 
 ## Instructions
+
+<Tabs items={["Using Prometheus client","Using OpenTelemetry"]}>
+
+<Tab>
 
 <Steps>
 
@@ -43,20 +47,120 @@ import (
 And then in your main function initialize the metrics:
 
 ```go filename="main.go"
-	autometrics.Init(
-		nil,
-		autometrics.DefBuckets,
-		autometrics.BuildInfo{},
-                nil,
-	)
+	autometrics.Init()
 ```
 
 ### Add `go:generate autometrics` to your code
+
+#### Automatically
+
+You can use the `am` binary and its `instrument` subcommand to automatically instrument your whole codebase. You can also use a grep invocation:
+
+```bash filename="Shell"
+# On Linux, use sed, not gsed
+find . \
+  -type d -name vendor -prune -or \
+  -type f -name '*.go' \
+  -print0 | xargs -0 gsed -i -e '/package/{a\//go:generate autometrics --inst-all --no-doc' -e ':a;n;ba}'
+```
+
+#### Manually
 
 The manual changes you need to do are:
 
 ```go filename="main.go"
 //go:generate autometrics
+
+//autometrics:doc
+func RouteHandler(args interface{}) (err error) { // Name the error return value; this is an optional but recommended change
+        // ...
+        return nil
+}
+```
+
+<Callout>
+If you want the generated metrics to contain the function success rate, you must name the error return value. This is why we recommend to name the error value you return for the function you want to instrument.
+</Callout>
+
+### Generate the documentation and instrumentation code
+
+As you have installed the generator as part of the prerequisites, it will take care of the rest, and you can
+simply call `go generate` with an optional environment variable:
+
+```bash filename="Shell"
+AM_PROMETHEUS_URL=http://localhost:9090/ go generate ./...
+```
+
+The generator will augment your doc comment to add quick links to metrics (using the Prometheus URL as base URL), and add a unique defer statement that will take care of instrumenting your code.
+
+The environment variable `AM_PROMETHEUS_URL` controls the base URL of the instance that is scraping the deployed version of your code. Having an environment variable means you can change the generated links without touching your code. Default value: `http://localhost:9090/`.
+
+<Callout>
+If you do not want to have lengthy documentation generated on top of the function, you can use `//autometrics:inst` annotation instead of `//autometrics:doc`.
+</Callout>
+
+### Make metrics available to Prometheus
+
+The last step now is to actually expose the generated metrics to the Prometheus instance.
+
+For Prometheus the shortest way is to add the handler code in your main entrypoint (this
+example also shows the `Init` call when choosing to use OpenTelemetry to handle metrics):
+
+```go {12} filename="main.go"
+import (
+	autometrics "github.com/autometrics-dev/autometrics-go/otel/autometrics"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+)
+
+func main() {
+	autometrics.Init(
+		autometrics.WithService("web-server"),
+		autometrics.WithMeterName("web-server"),
+		autometrics.WithCommit("anySHA"),
+		autometrics.WithVersion("2.1.37"),
+	)
+	http.Handle("/metrics", promhttp.Handler())
+}
+```
+
+This is the shortest way to initialize and expose the metrics that autometrics will use in the generated code.
+
+You're set! You can now start your app and preview the metrics.
+
+</Steps>
+</Tab>
+
+<Tab>
+
+<Steps>
+
+### Import the library in your code
+
+In the main entrypoint of your program, add the package:
+
+```go filename="main.go"
+import (
+	autometrics "github.com/autometrics-dev/autometrics-go/otel/autometrics"
+)
+```
+
+And then in your main function initialize the metrics:
+
+```go filename="main.go"
+	autometrics.Init(
+		autometrics.WithService("myApp"),
+		autometrics.WithMeterName("myApp/v2/prod"),
+		autometrics.WithCommit("anySHA"),
+		autometrics.WithVersion("2.1.37"),
+	)
+```
+
+### Add `go:generate autometrics --otel` to your code
+
+The manual changes you need to do are:
+
+```go filename="main.go"
+//go:generate autometrics --otel
 
 //autometrics:doc
 func RouteHandler(args interface{}) (err error) { // Name the error return value; this is an optional but recommended change
@@ -92,57 +196,30 @@ The environment variable `AM_PROMETHEUS_URL` controls the base URL of the instan
 If you do not want to have lengthy documentation generated on top of the function, you can use `//autometrics:inst` annotation instead of `//autometrics:doc`.
 </Callout>
 
-### Make metrics available to Prometheus
+### Push metrics to the OpenTelemetry collector
 
-The last step now is to actually expose the generated metrics to the Prometheus instance.
+If you have an OTLP collector setup with an accessible URL, then you can directly push your metrics to it by passing the relevant `WithPush...` options to `autometrics.Init`:
 
-For Prometheus the shortest way is to add the handler code in your main entrypoint (this
-example also shows the `Init` call when choosing to use OpenTelemetry to handle metrics):
-
-```go {12} filename="main.go"
-import (
-	autometrics "github.com/autometrics-dev/autometrics-go/otel/autometrics"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-)
-
-func main() {
-	autometrics.Init(
-		"web-server",
-		autometrics.DefBuckets,
-		autometrics.BuildInfo{},
-                nil,
+```go {6-11}
+shutdown, err := autometrics.Init(
+		autometrics.WithService("myApp"),
+		autometrics.WithMeterName("myApp/v2/prod"),
+		autometrics.WithCommit("anySHA"),
+		autometrics.WithVersion("2.1.37"),
+		autometrics.WithPushCollectorURL("https://collector.example.com"),
+		autometrics.WithPushJobName("instance_2"), // You can leave the JobName out to let autometrics generate one
+		autometrics.WithPushPeriod(1 * time.Second),
+		autometrics.WithPushTimeout(500 * time.Millisecond),
 	)
-	http.Handle("/metrics", promhttp.Handler())
-}
 ```
 
-This is the shortest way to initialize and expose the metrics that autometrics will use in the generated code.
-
-You're set! You can now start your app and preview the metrics.
-
 </Steps>
+</Tab>
+
+</Tabs>
 
 ## Viewing the metrics
 
 ### Using Autometrics Explorer
 <PreviewMetricsInExplorerSnippet/>
 
-### Configure your Prometheus
-
-Make sure your Prometheus is configured correctly to find the metrics.
-
-See the [Configuring Prometheus](/deploying-prometheus) section for deploy target-specific instructions. 
-
-Example configuration:
-
-```yaml filename="prometheus.yml"
-scrape_configs:
-  - job_name: my-app
-    metrics_path: /metrics
-    static_configs:
-      # Replace the port with the port your app listens on
-      - targets: ['<host>:<port>']
-    # For a real deployment, you would want the scrape interval to be
-    # longer but for testing, you want the data to show up quickly
-    scrape_interval: 200ms
-```

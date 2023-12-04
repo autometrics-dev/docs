@@ -9,27 +9,25 @@ It produces a `build_info` metric and uses labels to expose the version, commit 
 Example:
 
 ```prometheus 
-build_info{branch="main",commit="5cc2aa5447907fbf0a7ddd",version="1.0.0"} 1
+build_info{branch="main",commit="5cc2aa5447907fbf0a7ddd",version="1.0.0",service_name="Billing",repository_url="",repository_provider=""} 1
 ```
 
 ## Usage
 
-To add version information to your metrics, simply fill the `autometrics.BuildInfo` parameter to the `autometrics.Init()` call:
+To add version information to your metrics, simply add the relevant option parameters to the `autometrics.Init()` call:
 
 ```go {4-8} filename="main.go"
 autometrics.Init(
-    nil,
-    autometrics.DefBuckets,
-    autometrics.BuildInfo{
-        Version: "<version_here>",
-        Commit:  "<git_commit_hash_here",
-        Branch:  "<git_branch_here>",
-    },
-    nil,
+    autometrics.WithService("<service_name_here>"),
+    autometrics.WithVersion("<version_here>"),
+    autometrics.WithCommit("<git_commit_hash_here>"),
+    autometrics.WithBranch("<git_branch_here>"),
 )
 ```
 
-`autometrics.BuildInfo` parameter accepts each fields as strings which you can set as you wish or use something like `ldflags` to set them at build time.
+All `With...` initialization settings are optional, and not setting them will leave the label empty like `repository_url` and `repository_provider` in the example above.
+
+`autometrics.With...` options accept most fields as strings which you can set as you wish or use something like `ldflags` to set them at build time. Check the documentation on pkg.go.dev (for [Prometheus version](https://pkg.go.dev/github.com/autometrics-dev/autometrics-go/prometheus/autometrics) or [Open Telemetry version](https://pkg.go.dev/github.com/autometrics-dev/autometrics-go/otel/autometrics)) for more details about the initialization settings (all functions returning `autometrics.Option`).
 
 ## Using `ldflags` to add version information at build time
 
@@ -49,14 +47,10 @@ var (
 
 ```go {4-8} filename="main.go"
 autometrics.Init(
-    nil,
-    autometrics.DefBuckets,
-    autometrics.BuildInfo{
-        Version: Version,
-        Commit:  Commit,
-        Branch:  Branch,
-    },
-    nil,
+    autometrics.WithService("Billing"),
+    autometrics.WithVersion(Version),
+    autometrics.WithCommit(Commit),
+    autometrics.WithBranch(Branch),
 )
 ```
 
