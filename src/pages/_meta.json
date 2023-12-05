@@ -30,6 +30,7 @@
 		"type": "separator",
 		"title": "Deployment"
 	},
+	"deploy": "Autometrics Stack",
 	"deploying-prometheus": "Prometheus",
 	"deploying-explorer": "Explorer",
 	"deploying-alertmanager": "Alertmanager",

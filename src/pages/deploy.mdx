@@ -1,0 +1,130 @@
+import { Cards, Card } from "nextra-theme-docs"
+
+# Deploying Autometrics Stack
+
+The Autometrics Stack is an open-source application observability stack focused on simple instrumentation, metrics, and alerting. 
+
+The Autometrics Stack contains the following components:
+- Autometrics libraries for instrumenting code
+- [OpenTelemetry](https://opentelemetry.io/) - for underlying instrumentation (and optionally collecting)
+- [Prometheus](https://prometheus.io) + [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/) for metrics storage, querying, and alerting
+- Explorer for visualizing Autometrics data
+- Slack Application for better alert workflows between Prometheus and Slack
+
+Each of these components can be easily adopted and deployed to a hosting option of your choice (components are available as Docker images for ease of use):
+
+### Prometheus
+
+<Cards num={2}>
+	<Card
+	children
+	icon
+	title="Kubernetes"
+	href="/deploying-prometheus/kubernetes"
+	/>
+	<Card
+	children
+	icon
+	title="Docker"
+	href="/deploying-prometheus/docker"
+	/>
+	<Card
+	children
+	icon
+	title="Northflank"
+	href="/deploying-prometheus/northflank"
+	/>
+	<Card
+	children
+	icon
+	title="Railway"
+	href="/deploying-prometheus/railway"
+	/>
+</Cards>
+
+### OpenTelemetry Collector
+
+<Cards num={2}>
+	<Card
+	children
+	icon
+	title="Kubernetes"
+	href="/deploying-opentelemetry-collector/kubernetes"
+	/>
+	<Card
+	children
+	icon
+	title="Docker"
+	href="/deploying-opentelemetry-collector/docker"
+	/>
+	<Card
+	children
+	icon
+	title="Northflank"
+	href="/deploying-opentelemetry-collector/northflank"
+	/>
+	<Card
+	children
+	icon
+	title="Railway"
+	href="/deploying-opentelemetry-collector/railway"
+	/>
+</Cards>
+
+### Explorer
+
+<Cards num={2}>
+	<Card
+	children
+	icon
+	title="Kubernetes"
+	href="/deploying-explorer/kubernetes"
+	/>
+	<Card
+	children
+	icon
+	title="Docker"
+	href="/deploying-explorer/docker"
+	/>
+	<Card
+	children
+	icon
+	title="Northflank"
+	href="/deploying-explorer/northflank"
+	/>
+	<Card
+	children
+	icon
+	title="Railway"
+	href="/deploying-explorer/railway"
+	/>
+</Cards>
+
+### Alertmanager
+
+<Cards num={2}>
+	<Card
+	children
+	icon
+	title="Kubernetes"
+	href="/deploying-alertmanager/kubernetes"
+	/>
+	<Card
+	children
+	icon
+	title="Docker"
+	href="/deploying-alertmanager/docker"
+	/>
+	<Card
+	children
+	icon
+	title="Northflank"
+	href="/deploying-alertmanager/northflank"
+	/>
+	<Card
+	children
+	icon
+	title="Railway"
+	href="/deploying-alertmanager/railway"
+	/>
+</Cards>

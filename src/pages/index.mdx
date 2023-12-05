@@ -1,4 +1,4 @@
-import { Cards, Card } from "nextra-theme-docs";
+import { Cards, Card, Steps } from "nextra-theme-docs";
 
 # What is Autometrics?
 
@@ -8,7 +8,9 @@ To make it easy for you to spot and debug issues in production, Autometrics inse
 
 Autometrics is built on the excellent Prometheus and OpenTelemetry open source projects.
 
-### Demo
+## Demo
+
+Here's a simple overview video for Autometrics
 
 <p>
   <video
@@ -22,6 +24,12 @@ Autometrics is built on the excellent Prometheus and OpenTelemetry open source p
 
 ## Getting started
 
+You can start working with Autometrics as early as the first lines of your code and it can take you as far as alerting about issues in your team's Slack workspace. Here are the basic steps to get you started:
+
+<Steps>
+
+### Install the library
+
 Autometrics is currently available in Rust, JavaScript/TypeScript, and
 Python, Go. To get started, follow the instructions for each language:
 
@@ -31,3 +39,32 @@ Python, Go. To get started, follow the instructions for each language:
   <Card arrow title="Go" href="/go/quickstart" />
   <Card arrow title="Python" href="/python/quickstart" />
 </Cards>
+
+### Install Prometheus + Alertmanager
+
+Autometrics libraries export metrics in a Prometheus-compatible format. In order to store and query them you can deploy a Prometheus server in your stack
+
+<Cards num={2}>
+  <Card arrow title="Kubernetes" href="/deploying-prometheus/kubernetes" />
+  <Card arrow title="Docker" href="/deploying-prometheus/docker" />
+</Cards>
+
+### Deploy Explorer
+
+Autometrics Explorer is a special interface that connects with your Prometheus and helps you analyze your Autometrics-generated data more easily. It is a simple client app available at explorer.autometrics.dev or deployable as a Docker image as well.
+
+<Cards num={2}>
+  <Card arrow title="Kubernetes" href="/deploying-explorer/kubernetes" />
+  <Card arrow title="Docker" href="/deploying-explorer/docker" />
+</Cards>
+
+### Deploy Slack application
+
+Finally, Autometrics includes a special-built Slack application that connects with your Prometheus Alertmanager and offers a simple workflow for monitoring and responding to alerts.
+
+<Cards num={2}>
+  <Card arrow title="Kubernetes" href="/deploying-alertmanager/kubernetes" />
+  <Card arrow title="Docker" href="/deploying-alertmanager/docker" />
+</Cards>
+
+</Steps>
