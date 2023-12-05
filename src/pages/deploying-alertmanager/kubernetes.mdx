@@ -1,0 +1,52 @@
+---
+title: Deploying Alertmanager in Kubernetes
+short: Kubernetes
+---
+
+import { Steps, Tabs, Tab } from "nextra/components"
+import CreateSlackApplication from "@/snippets/create-slack-application.mdx"
+
+# Deploying Alertmanager in Kubernetes
+
+Alertmanager is a utility service deployed alongside Prometheus to help route, group, and prioritize alerts. Alertmanager does not trigger alerts - alerting *rules* are set in Prometheus itself, Alertmanager only takes care of the lifecycle of the alert *after* it has been triggered (you can think of it as Zapier but for Prometheus alerts).
+
+Alertmanager is part of the Prometheus stack, the most popular open-source monitoring solution for Kubernetes, therefore deploying and configuring it is pretty straightforward.
+
+## Requirements
+- Kubernetes cluster running with `kubectl` configured to access it
+- [Helm](https://helm.sh/docs/intro/install) installed
+
+### Autometrics-instrumented application with SLOs
+
+Autometrics enables you to set up smarter alerts using the Service Level Objectives (SLO) approach. You can read more about SLOs in Autometrics [here](/slo) and follow the guides for SLO-instrumentation under each supported language:
+
+- [Rust](/rust/adding-alerts-and-slos)
+- [TypeScript](/typescript/adding-alerts-and-slos)
+- [Go](/go/adding-alerts-and-slos)
+- [Python](/python/adding-alerts-and-slos)
+
+## Instructions
+
+<Steps>
+
+### Create a `monitoring` namespace
+
+It is a good practice to keep all monitoring resources in a separate namespace. To create a namespace run the following command (if you already have a namespace for monitoring tools, you can skip this step):
+
+```bash
+kubectl create namespace monitoring
+```
+
+### Deploy Alertmanager to Kubernetes
+
+Run the following command to install Alertmanager using the Helm chart. If you've already installed Prometheus using Helm, you can skip this step.
+
+```bash
+helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring
+```
+
+This will install Alertmanager in your cluster along with Prometheus, Node Exporter, and a few other components. As these components are installed together they are configured to work with each other out of the box.
+
+</Steps>
+
+You can now configure your Alertmanager to group, organize, and send alerts to whichever channel you're using for incident response. See [Alertmanager documentation](https://prometheus.io/docs/alerting/latest/configuration/) for details.

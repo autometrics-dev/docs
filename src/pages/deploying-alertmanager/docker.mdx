@@ -4,6 +4,7 @@ short: Docker
 ---
 
 import { Steps } from "nextra/components";
+import CreateSlackApplication from "@/snippets/create-slack-application.mdx"
 
 # Deploying Alertmanager on Docker 
 
@@ -17,7 +18,7 @@ Alertmanager is available as a Docker image from the official Prometheus organiz
 
 Make sure you have Prometheus running in the environment you're hoping to connect the Alertmanager to. See [Deploying Prometheus to Docker](deploying-prometheus/docker).
 
-### Autometrics-instrumented application with defined SLOs
+### Autometrics-instrumented application with SLOs
 
 Autometrics enables you to set up smarter alerts using the Service Level Objectives (SLO) approach. You can read more about SLOs in Autometrics [here](/slo) and follow the guides for SLO-instrumentation under each supported language:
 
@@ -34,11 +35,7 @@ In the following guide we'll deploy a basic Alertmanager instance configured to 
 
 ### Create a Slack application
 
-First, we need to create a Slack application that will be used to send notifications to Slack. You can create a new Slack application [here](https://api.slack.com/apps). Make sure to install it to the workspace you want to send notifications to.
-
-Once you've created and installed the application, you'll need to get the bot token that will be used to send notifications. You can find it under the `OAuth & Permissions` tab in the application settings.
-
-It will look something like this: `xoxb-*****`.
+<CreateSlackApplication />
 
 ### Create a configuration file for Alertmanager
 
