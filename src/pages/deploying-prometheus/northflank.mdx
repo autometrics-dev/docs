@@ -8,6 +8,8 @@ import { Steps } from "nextra/components"
 # Deploying Prometheus on Northflank
 
 Prometheus is available as an official Docker image on Docker Hub. We can use it as a base image and layer in our configuration before deploying it on Northflank.
+You find the resources for the Deployment [here](https://github.com/autometrics-dev/autometrics-shared/tree/main/deployment-guides-resources/prometheus).
+
 
 <Steps>
 
@@ -27,6 +29,7 @@ scrape_configs:
 ```
 
 See the [Prometheus configuration reference](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) for full details.
+You can find an example config.yaml [here](https://github.com/autometrics-dev/autometrics-shared/blob/main/deployment-guides-resources/prometheus/prometheus.yml).
 
 ### Add a Dockerfile in the root of the repository
 
