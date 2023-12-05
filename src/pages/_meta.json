@@ -33,7 +33,7 @@
 	"deploy": "Autometrics Stack",
 	"deploying-prometheus": "Prometheus",
 	"deploying-explorer": "Explorer",
-	"deploying-alertmanager": "Alertmanager",
+	"deploying-alertmanager": "Alertmanager + Slack",
 	"deploying-otel-collector": "OTel Collector",
 	"other": {
 		"type": "separator",
