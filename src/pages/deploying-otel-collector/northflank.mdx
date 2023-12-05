@@ -1,0 +1,76 @@
+---
+title: Deploying OTel Collector on Northflank
+short: Northflank
+---
+import { Steps } from "nextra/components";
+
+# Deploying OTel Collector on Northflank
+OTel Collector is available as an official [Docker image](https://hub.docker.com/r/otel/opentelemetry-collector) on Docker Hub. We can use it as a base image and layer in our configuration before deploying it on Railway.
+You find the resources for the Deployment [here](https://github.com/autometrics-dev/autometrics-shared/tree/main/deployment-guides-resources/otel-collector).
+
+<Steps>
+
+### Create a GitHub repository and a Otel Collector configuration file
+We will use Northflank's ability to deploy from a repository using a [Dockerfile](https://northflank.com/docs/v1/application/build/build-with-a-dockerfile) to set up our Prometheus instance.
+
+Create a file named `otel-collector-config.yaml` to specify a receiver endpoint for sending metrics from the instrumented application.
+
+
+```yaml {filename="otel-collector-config.yml"} showLineNumbers
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+
+  pipelines:
+    metrics:
+      receivers: [otlp]
+```
+
+#### Optional: Export metrics
+As the OTel Collector acts as a proxy, we can define an exporter to send metrics. 
+In this example, metrics are pushed to [Prometheus's remote write receiver](https://prometheus.io/docs/prometheus/latest/querying/api/#remote-write-receiver). 
+Note that while Prometheus advises against this method for efficient sample ingestion, it is chosen here because Autometrics relies on Prometheus for superior querying and visualization capabilities.
+
+```yaml {filename="otel-collector-config.yml"} showLineNumbers
+exporters:
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    resource_to_telemetry_conversion:
+      enabled: true # Convert resource attributes to
+
+  pipelines:
+    metrics:
+      exporters: [prometheusremotewrite]
+```
+You can find an example otel-config.yaml [here](https://github.com/autometrics-dev/autometrics-shared/blob/main/deployment-guides-resources/otel-collector/otel-collector-config.yaml).
+
+### Add a Dockerfile in the root of the repository
+The below [Dockerfile](https://github.com/autometrics-dev/autometrics-shared/blob/main/deployment-guides-resources/otel-collector/Dockerfiles) uses the base Otel Collector image and loads our configuration 
+
+```Dockerfile 
+FROM otel/opentelemetry-collector:latest
+ADD otel-collector-config.yaml /etc/otelcol/config.yaml
+```
+
+### Create a Northflank service from a GitHub repo
+Create a Northflank service from our newly created GitHub repo, it should pick up the configuration from the Dockerfile.
+
+### Add Network configurations
+In order to make Prometheus accessible to other services in your Northflank network or externally configure the PORT & DNS settings under the service network section in the Northflank UI. 
+
+![Northflank Network Settings for Otel Collector](/images/northflank-otel-collector-networking.png)
+
+
+### Configure application code
+ Utilize the 'push' capabilities in your chosen Autometrics language library, detailed in each language's quickstart section. 
+ When initializing the OTLP exporter, specify the endpoint for your deployed OTel Collector. 
+ Note that the OTel Collector expects metrics at **/v1/metrics**.
+ 
+
+ If you have deployed the OTel collector with the port set to 4318 your internal Northflank endpoint should look something like this: 
+
+ `http://name-of-collector-service:4318/v1/metrics`
+
+</Steps>

@@ -31,9 +31,10 @@
 		"title": "Deployment"
 	},
 	"deploy": "Autometrics Stack",
-	"deploying-prometheus": "Deploying Prometheus",
-	"deploying-explorer": "Deploying Explorer",
-	"deploying-alertmanager": "Deploying Alertmanager",
+	"deploying-prometheus": "Prometheus",
+	"deploying-explorer": "Explorer",
+	"deploying-alertmanager": "Alertmanager",
+	"deploying-otel-collector": "OTel Collector",
 	"other": {
 		"type": "separator",
 		"title": ""
