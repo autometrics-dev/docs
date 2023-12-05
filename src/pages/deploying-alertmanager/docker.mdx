@@ -96,3 +96,111 @@ alerting:
 ```
 
 </Steps>
+
+## Add the Autometrics Slack App
+
+Autometrics Slack App is a simple open-source, self-hosted Slack service for Autometrics SLO alerts. It integrates with the Alertmanager and adds more context for each triggered message: the Slack app pulls recent relevant Prometheus data and renders it as an image of the graph on Slack.
+
+Autometrics Slack app is open-source and available as a [Docker image](https://hub.docker.com/r/autometrics/slack-app). Here's a quick guide how to add it and configure it with your Prometheus and Alertmanager setup.
+
+<Steps>
+
+### Create a new Slack application
+
+Go to [https://api.slack.com/apps/](https://api.slack.com/apps/), select your workspace, and create an application **from manifest**.
+
+This is a basic Slack application manifest with limited permissions to post chat messages on channels that the application gets added to. You can find the manifest below:
+
+```yaml filename="manifest.yml"
+_metadata:
+  major_version: 1
+  minor_version: 0
+display_information:
+  name: Autometrics
+  description: This bot provides a way for our Autometrics slack-app to communicate with the Slack API.
+  long_description: |
+    This bot provides a way for our Autometrics slack-app to communicate with
+    the Slack API. The autometrics slack-app will post messages to a specified
+    channel whenever a alert occurs in your alertmanager (note this requires
+    modifications in your alertmanager configuration).
+  background_color: "#00FFAA"
+settings:
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
+features:
+  app_home:
+    home_tab_enabled: false
+    messages_tab_enabled: false
+  bot_user:
+    display_name: Autometrics
+    always_online: false
+oauth_config:
+  scopes:
+    bot:
+      - chat:write
+```
+
+Install your new Slack application into your workspace in the *Install your app* section and grab the *Bot User OAuth Token*, starts with `xoxb-***`
+
+### Deploy the Slack application
+
+You can deploy the Slack application as any other Docker image. The Slack application requires some configuration passed in as environment variables and needs access to the Prometheus, Alertmanager and Slack API.
+
+Here are the necessary environment variables:
+
+| Variable | Description |
+| -------- | ----------- |
+| `LISTEN_HOST` | Make sure this address allows for remote connections |
+| `BASE_URL` | The URL that the Slack should be accessible at (for Slack API) |
+| `SLACK_CHANNEL` | Which Slack channel the app should post alerts to (make sure the application is invited to it!) |
+| `SLACK_BOT_TOKEN` | The `xoxb-***` value we grabbed earlier when creating the application |
+| `STORAGE_DIR` | The directory where the generated alert images should be stored. Make sure it's persistent storage |
+| `DB_CONNECTION_STRING` | The sqlite connection string for historic alert storage. Make sure it's persistent |
+
+Here's an example `docker-compose.yaml` file with the above configuration in place:
+
+```yaml filename="docker-compose.yaml"
+version: '3.8'
+
+services:
+  slack-app:
+    image: autometrics/slack-app:v0.1.0
+    ports:
+      - "3031:3031"
+    environment:
+      RUST_LOG: info
+      LOG_JSON: "true"
+      LISTEN_HOST: 0.0.0.0
+      PORT: "3031"
+      BASE_URL: "https://slack-app.example.com"
+      EXPLORER_URL: https://explorer.autometrics.dev
+      SLACK_CHANNEL: "test-slack-app"
+      SLACK_BOT_TOKEN: xoxb-000000000-000000000-000000000
+      PROMETHEUS_URL: http://prometheus:9090
+      STORAGE_DIR: /data/
+      DB_CONNECTION_STRING: "sqlite:///data/slack-app.db?mode=rwc"
+    volumes:
+      - slack-app-data:/data
+
+volumes:
+  slack-app-data:
+```
+
+### Update Alertmanager configuration
+
+Finally we need to update the Alertmanager so that it sends a Webhook request whenever an alert is triggered to our newly deployed Slack application:
+
+```yaml filename="alertmanager.yml"
+global:
+receivers:
+- name: default-receiver
+  webhook_configs:
+  - send_resolved: true
+    url: 'http://slack-app:3031/api/alerts'
+route:
+  receiver: default-receiver
+```
+
+</Steps>
+
