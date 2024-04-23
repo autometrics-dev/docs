@@ -46,7 +46,7 @@ This will install Prometheus in your cluster along with Alertmanager, Node Expor
 
 If you have installed Prometheus using the [helm chart](https://github.com/prometheus-community/helm-charts), service discovery should be enabled by default.
 
-Service discovery uses Kubernetes labels to tell Prometheus which ports to look for. In order to make sure that your application metrics are available add the following annotations to your app's deployment:
+Service discovery uses Kubernetes annotations to tell Prometheus which ports to look for. In order to make sure that your application metrics are available add the following annotations to your app's deployment:
 
 ```yaml filename="deployment.yaml"
 apiVersion: apps/v1
