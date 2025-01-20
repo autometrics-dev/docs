@@ -5,21 +5,21 @@ const withNextra = nextra({
   themeConfig: "./theme.config.tsx",
   defaultShowCopyCode: true,
   latex: true,
+  webpack: (config, { isServer }) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "lodash-es": "lodash",
+    };
+    return config;
+  },
 });
 
 /**
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
-  async redirects() {
-    return [
-      {
-        source: "/configuring-prometheus/:slug*",
-        destination: "/deploying-prometheus/:slug*",
-        permanent: true,
-      },
-    ];
-  },
+  output: "export",
+  images: { unoptimized: true },
 };
 
 export default withNextra(nextConfig);

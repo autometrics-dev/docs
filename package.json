@@ -11,8 +11,10 @@
 	"dependencies": {
 		"@biomejs/biome": "^1.2.2",
 		"@segment/snippet": "^4.16.0",
+		"@types/lodash": "^4.17.14",
 		"date-fns": "^2.30.0",
 		"katex": "^0.16.8",
+		"lodash": "^4.17.21",
 		"next": "^13.4.19",
 		"nextra": "^2.12.3",
 		"nextra-theme-docs": "^2.12.3",
